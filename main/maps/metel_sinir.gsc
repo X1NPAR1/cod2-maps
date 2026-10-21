@@ -26,3 +26,59 @@ cokgen()
 	return p;
 }
 
+pencereler()
+{
+	p = [];
+	p[p.size] = (-600, 164, 20);
+	p[p.size] = (-600, 164, 228);
+	p[p.size] = (-440, 164, 20);
+	p[p.size] = (-440, 164, 228);
+	p[p.size] = (-86, 164, 228);
+	p[p.size] = (120, 164, 20);
+	p[p.size] = (120, 164, 228);
+	p[p.size] = (300, 164, 20);
+	p[p.size] = (300, 164, 228);
+	p[p.size] = (-680, 418, 20);
+	p[p.size] = (-680, 418, 228);
+	p[p.size] = (-680, 738, 20);
+	p[p.size] = (-680, 738, 228);
+	p[p.size] = (380, 418, 20);
+	p[p.size] = (380, 418, 228);
+	p[p.size] = (380, 738, 20);
+	p[p.size] = (380, 738, 228);
+	p[p.size] = (-560, 776, 20);
+	p[p.size] = (-560, 776, 228);
+	p[p.size] = (-250, 776, 228);
+	p[p.size] = (250, 776, 20);
+	p[p.size] = (250, 776, 228);
+	return p;
+}
+
+pencere_yonleri()
+{
+	y = [];
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 270;
+	y[y.size] = 180;
+	y[y.size] = 180;
+	y[y.size] = 180;
+	y[y.size] = 180;
+	y[y.size] = 0;
+	y[y.size] = 0;
+	y[y.size] = 0;
+	y[y.size] = 0;
+	y[y.size] = 90;
+	y[y.size] = 90;
+	y[y.size] = 90;
+	y[y.size] = 90;
+	y[y.size] = 90;
+	return y;
+}
+

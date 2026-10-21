@@ -18,6 +18,8 @@ metel_muzik_catisma,,music/downtownsniper_soviet_tension_GRFINAL.mp3,0.85,,music
 metel_muzik_karakol,,music/demolition_soviet_charge_GRFINAL.mp3,0.95,,,,,,,music,streamed,,looping,,metel,,,,,,music,,
 metel_muzik_savunma,,music/demolition_soviet_holdline2_GRFINAL.mp3,0.85,,music,,,,,music,streamed,,looping,,metel,,,,,,music,,
 metel_muzik_final,,music/demolition_victory_serious_GRFINAL.mp3,0.95,,music,,,,,music,streamed,,looping,,metel,,,,,,music,,
+eldaba_doorbreak,,doors/eldaba_doorbreak_1b.wav,1,1,na,1,1,5000,,auto,streamed,,,,metel,,,,,,,,
+matmata_stuka_flyby1,,vehicles/stuka_planeby1.wav,1,1,,1,1,500000,,local,streamed,,,,metel,,,,,,,,
 mortar_explosion,1,explosions/mortar_dirt01.wav,0.6,0.75,explosion,0.8,1.2,4000,12000,voice,streamed,,,0.7,metel,,,,,,,,0.3
 mortar_explosion,2,explosions/mortar_dirt02.wav,0.6,0.75,explosion,0.8,1.2,4000,12000,voice,streamed,,,0.7,metel,,,,,,,,0.3
 mortar_explosion,3,explosions/mortar_dirt03.wav,0.6,0.75,explosion,0.8,1.2,4000,12000,voice,streamed,,,0.7,metel,,,,,,,,0.3

@@ -222,6 +222,8 @@ def yerlestir(G):
         for y in range(G.SY0 + 96, G.SY1 - 95, ADIM):
             if not serbest(x, y) or not egim_ok(x, y):
                 continue
+            if (x, y) in ((1082, -2474), (4382, -1424)):     # baglantisiz kalan tekil noktalar (olculdu)
+                continue
             ent('node_pathnode', origin=(x, y, zz(x, y)))
     # yollar boyunca sik dugum (rampa ve patika icin zorunlu: egim_ok yalniz yolda gevser)
     for ad, (hat, gen) in G.YOL_HAT.items():
@@ -354,6 +356,11 @@ def yerlestir(G):
     # takviye: harita DISINDA guney yolu (orman arkasi, gorus disi) -- TEK nokta
     TAKVIYE_C = ['actor_ally_rus_reg_ppsh', 'actor_ally_rus_reg_mosin', 'actor_ally_rus_reg_svt40',
                  'actor_ally_rus_reg_pps42']
+    # savunma takviyesi: karakolun KUZEYINDE ormanin icinde (oyuncu goremez)
+    for i, c in enumerate(['actor_ally_rus_reg_ppsh', 'actor_ally_rus_reg_mosin', 'actor_ally_rus_reg_svt40',
+                           'actor_ally_rus_reg_pps42']):
+        # duz kuzey yolu (bina kuzeybatisi); dik tepede dugum yoktu, takviye kaliyordu
+        sp(c, -1500 + i * 90, 1180, None, 0, targetname='takviye_kuzey', spawnflags=1, count=1)
     tx, ty = G.W(500, 997)           # guney yolu, tepe arkasi (uc kisim yol agindan kopuk, olculdu)
     for i, c in enumerate(TAKVIYE_C):
         sp(c, tx - 60 + (i % 2) * 120, ty - (i // 2) * 110, targetname='takviye', target='player', spawnflags=1)
@@ -402,7 +409,10 @@ def yerlestir(G):
     C_N = [(MCx + 40, MCy - 40, 0, 200), (MCx + 40, MCy + 30, 0, 200)] + SIPER['c']
     grup('alman_c', 'mevzi_c', C_N, dis, 10)
     print('siper:', {k: len(v) for k, v in SIPER.items()})
-    A_N = SIPER['a_dis'][:5] + SIPER['a_zemin'][:5] + SIPER['a_ust'][:5]
+    # dogu ust oda kapisi savunmaya kadar KILITLI -> oraya Alman konmaz (A kilitlenmesin)
+    ust_uygun = [q for q in SIPER['a_ust'] if XW + 20 < q[0] < XE - 20]   # iki yan oda da kapali
+    ust5 = ust_uygun[:5]
+    A_N = SIPER['a_dis'][:5] + SIPER['a_zemin'][:5] + ust5 + SIPER['a_dis'][5:5 + 5 - len(ust5)]
     katf = lambda x, y, z: 1 if z > ZU else 0 if z > ZT and X0 < x < X1 and Y0 < y < Y1 else None
     grup('alman_a', 'karakol', A_N, katf, 15)
 
@@ -440,7 +450,7 @@ def yerlestir(G):
             yk = min(G.KOPRU_Y, key=lambda v: abs(v - y))
             return G.KOPRU_Z[G.KOPRU_Y.index(yk)] + 16
         return round(zemin(x, y) + 16, 1)
-    def arac(ad, tip, model, grup, nokta, hiz, binen, yerler, cesit):
+    def arac(ad, tip, model, grup, nokta, hiz, binen, yerler, cesit, takim='axis'):
         ince = []
         for i in range(len(nokta) - 1):
             (ax, ay), (bx, by) = nokta[i], nokta[i + 1]
@@ -462,7 +472,7 @@ def yerlestir(G):
         (x0, y0), (x1, y1) = ince[0], ince[1]
         yaw = round(math.degrees(math.atan2(y1 - y0, x1 - x0)), 1)
         H.ent('script_vehicle', targetname=ad, target=ad + '_yol', vehicletype=tip, model=model,
-              script_vehiclespawngroup=grup, script_team='axis', script_vehicleride=binen,
+              script_vehiclespawngroup=grup, script_team=takim, script_vehicleride=binen,
               origin=(round(x0, 1), round(y0, 1), arac_z(x0, y0) - 14), angles=(0, yaw, 0))
         # yolcular: arac yaninda (harita disi), aracin icine isinlanir
         # yolcular aracin YOLU boyunca, govdeden uzakta (olculdu: duz ileri
@@ -476,9 +486,13 @@ def yerlestir(G):
                     return (ax + (bx - ax) * kalan / L, ay + (by - ay) * kalan / L)
                 kalan -= L
             return ince[-1]
+        L0 = math.hypot(x1 - x0, y1 - y0) or 1
+        ux, uy = (x1 - x0) / L0, (y1 - y0) / L0
         for k, yer in enumerate(yerler):
             c = cesit[k % len(cesit)]
-            ox, oy = yol_boyu(560 + k * 70)
+            yan = 110 if k % 2 == 0 else -110          # iki yanda (170: vadide yamaca gomuluyordu)
+            geri = 20 + (k // 2) * 60                  # govde boyunca, yolun duz kisminda
+            ox, oy = x0 + ux * geri - uy * yan, y0 + uy * geri + ux * yan
             say[c] = say.get(c, 0) + 1
             H.ent(c, origin=(round(ox, 1), round(oy, 1), round(zemin(ox, oy) + 4, 1)), angles=(0, yaw, 0),
                   targetname=ad + '_asker', script_vehicleride=binen, script_startingposition=yer,
@@ -487,11 +501,26 @@ def yerlestir(G):
     DH = G.YOL_HAT['dogu_giris'][0]; GD = G.YOL_HAT['gdogu'][0]
     xy = lambda L: [(p[0], p[1]) for p in L]
     arac('kamyon', 'blitz', 'xmodel/vehicle_opel_blitz_snow', 1,
-         xy(GH[:10]) + [W(643, 700)], 30, 1, range(6), TUFEK)
+         xy(GH[:10]) + [W(628, 728), W(608, 706)], 60, 1, range(9), TUFEK)
     arac('yaripalet1', 'germanhalftrack', 'xmodel/vehicle_halftrack_mg_snow', 2,
          xy(BH[:10]) + [W(430, 595)], 16, 2, range(0, 6), TUFEK)
     arac('yaripalet2', 'germanhalftrack', 'xmodel/vehicle_halftrack_mg_snow', 3,
          xy(DH) + xy([GD[6], GD[5], GD[4], GD[3]]) + [W(798, 640), W(773, 627)], 16, 3, range(0, 6), TUFEK)
+
+    # Final (kullanici): baslangic bolgesinden 2 SOVYET kamyonu, Alman kamyonunun
+    # yari hizinda; biri karakolun dogusundaki, digeri batisindaki yolda durur.
+    SOV = ['actor_ally_rus_reg_ppsh', 'actor_ally_rus_reg_mosin', 'actor_ally_rus_reg_svt40',
+           'actor_ally_rus_reg_pps42']
+    bas = xy(GH[:10]) + [W(645, 690), W(640, 655)]
+    arac('sovyet_dogu', 'blitz', 'xmodel/vehicle_opel_blitz_snow', 4,
+         bas + [W(690, 646), W(728, 640)], 20, 4, range(9), SOV, takim='allies')
+    arac('sovyet_bati', 'blitz', 'xmodel/vehicle_opel_blitz_snow', 5,
+         bas + [W(560, 640), W(505, 628)], 20, 5, range(9), SOV, takim='allies')
+
+    # sol (bati) ust oda: kapiyi kirip saldiracak Alman (kapinin hemen arkasinda)
+    for (dx, dy, c) in ((-160, 700, 'actor_axis_snow_wehr_reg_mp40'), (-210, 745, 'actor_axis_snow_wehr_reg_kar98k')):   # dosya dolabindan uzak (olculdu)
+        H.ent(c, origin=(XW + dx, dy, ZU + 4), angles=(0, 0, 0), targetname='kapi_alman', spawnflags=1, count=1)
+        say[c] = say.get(c, 0) + 1
 
     # =====================================================================
     # 6. HAVAN ISABET NOKTALARI (maps\_mortar::generic_style) + namlu

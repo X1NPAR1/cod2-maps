@@ -19,6 +19,9 @@ for h in ('krasnoye', 'metel'):
         kopya(f, os.path.join(DEPO, 'main', 'maps', ad))
     for alt, uz in (('soundaliases', '.csv'), ('localizedstrings', '.str'), ('sun', '.sun')):
         kopya(os.path.join(OYUN, 'main', alt, h + uz), os.path.join(DEPO, 'main', alt, h + uz))
+    plat = os.path.join(OYUN, 'main', 'localizedstrings', h + '_platform.str')
+    if os.path.exists(plat):
+        kopya(plat, os.path.join(DEPO, 'main', 'localizedstrings', h + '_platform.str'))
     kopya(os.path.join(OYUN, 'map_source', h + '.map'), os.path.join(DEPO, 'map_source', h + '.map'))
     arac = os.path.join(OYUN, h + '_tools')
     for f in glob.glob(os.path.join(arac, '*')):

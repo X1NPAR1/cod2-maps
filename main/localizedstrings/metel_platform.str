@@ -1,0 +1,14 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "metel platform"
+
+REFERENCE           KAPI_KIR
+LANG_ENGLISH        "Tusa BAS: [&&1] Kapiyi kir."
+
+REFERENCE           MOSIN_AL
+LANG_ENGLISH        "Tusa BAS: [&&1] Silahini dürbünlü Mosin ile degistir."
+
+REFERENCE           MOSIN_BIRAK
+LANG_ENGLISH        "Tusa BAS: [&&1] Biraktigin silahi geri al."
+
+ENDMARKER

@@ -14,6 +14,12 @@ LANG_ENGLISH        "A noktasi: Alman karakolunu ele gecir."
 REFERENCE           OBJ_SAVUN
 LANG_ENGLISH        "Karakolu Alman karsi saldirisina karsi savun."
 
+REFERENCE           OBJ_TUFEK
+LANG_ENGLISH        "Ust kattaki dürbünlü Mosin'i al."
+
+REFERENCE           OBJ_KAPI
+LANG_ENGLISH        "Üst kattaki kapiyi aç, dürbünlü Mosin'i al."
+
 REFERENCE           OBJ_TOPLAN
 LANG_ENGLISH        "Avluda Tegmen Leonov'un yanina git."
 

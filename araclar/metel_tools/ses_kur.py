@@ -45,6 +45,8 @@ GOREV = [
     ('OBJ_C', "C mevzisi: Dogu sirtindaki havan ekibini yok et."),
     ('OBJ_A', "A noktasi: Alman karakolunu ele gecir."),
     ('OBJ_SAVUN', "Karakolu Alman karsi saldirisina karsi savun."),
+    ('OBJ_TUFEK', "Ust kattaki dürbünlü Mosin'i al."),
+    ('OBJ_KAPI', "Üst kattaki kapıyı aç, dürbünlü Mosin'i al."),
     ('OBJ_TOPLAN', "Avluda Tegmen Leonov'un yanina git."),
     ('BITTI', "Metel Harekati tamamlandi."),
     ('INTRO_TITLE', '"Operatsiya Metel"'),
@@ -164,6 +166,20 @@ def main():
         o += ['REFERENCE           %s' % ref, 'LANG_ENGLISH        "%s"' % tr(t), '']
     o.append('ENDMARKER')
     with open(os.path.join(ANA, 'localizedstrings', HARITA + '.str'), 'wb') as f:
+        f.write('\r\n'.join(o).encode('cp1254') + b'\r\n')
+    # Tus adi ([[{+activate}]]) yalniz *_platform.str metinlerinde cozulur
+    # (stok tankhunt_platform.str gibi; olculdu: normal str'de ham gorundu)
+    PLATFORM = [
+        ('KAPI_KIR', "Tuşa BAS: [&&1] Kapıyı kır."),
+        ('MOSIN_AL', "Tuşa BAS: [&&1] Silahını dürbünlü Mosin ile değiştir."),
+        ('MOSIN_BIRAK', "Tuşa BAS: [&&1] Bıraktığın silahı geri al."),
+    ]
+    o = ['VERSION             "1"', 'CONFIG              "C:\\trees\\cod2\\bin\\StringEd.cfg"',
+         'FILENOTES           "%s platform"' % HARITA, '']
+    for ref, t_ in PLATFORM:
+        o += ['REFERENCE           %s' % ref, 'LANG_ENGLISH        "%s"' % tr(t_), '']
+    o.append('ENDMARKER')
+    with open(os.path.join(ANA, 'localizedstrings', HARITA + '_platform.str'), 'wb') as f:
         f.write('\r\n'.join(o).encode('cp1254') + b'\r\n')
     print('alias satiri: %d  stok kopya: %s  gorev metni: %d' % (len(satir) - 1, kopya, len(GOREV)))
 

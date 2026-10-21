@@ -26,6 +26,8 @@ precacheFX()
 	level._effectType["havan_b"] = "mortar";
 	level._effectType["havan_c"] = "mortar";
 	level._effect["havan_namlu"] = loadfx("fx/muzzleflashes/mortar_flash.efx");
+	level._effect["kapi_toz"]   = loadfx("fx/dust/dust_door_ambush.efx");
+	level._effect["kapi_kiymik"] = loadfx("fx/impacts/large_woodhit.efx");
 }
 
 // tankhunt playerEffect(): oyuncunun ustunde hafif kar (gorusu kapatmaz)

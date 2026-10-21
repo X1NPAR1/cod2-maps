@@ -26,12 +26,23 @@ main()
 	precacheString(&"METEL_OBJ_A");
 	precacheString(&"METEL_OBJ_SAVUN");
 	precacheString(&"METEL_OBJ_TOPLAN");
+	precacheString(&"METEL_OBJ_TUFEK");
+	precacheString(&"METEL_PLATFORM_KAPI_KIR");
+	precacheString(&"METEL_PLATFORM_MOSIN_AL");
+	precacheString(&"METEL_PLATFORM_MOSIN_BIRAK");
+	precacheString(&"METEL_OBJ_KAPI");
+	precacheModel("xmodel/weapon_mosinnagantscoped_cloth_obj");
+	precacheModel("xmodel/weapon_mosinnagant");
+	precacheModel("xmodel/weapon_mosinnagantscoped_cloth");
+	precacheModel("xmodel/weapon_tt30");
+	precacheItem("mosin_nagant_sniper");
 	precacheString(&"METEL_BITTI");
 	precacheString(&"METEL_INTRO_TITLE");
 	precacheString(&"METEL_INTRO_PLACE");
 	precacheString(&"METEL_INTRO_DATE");
 	precacheString(&"METEL_INTRO_INFO");
 	precacheShader("black");
+	precacheModel("xmodel/vehicle_stuka_flying");
 	precacheItem("smoke_grenade_american");     // demolition throwSmoke
 
 	level.campaign = "russian";
@@ -50,8 +61,7 @@ main()
 
 	level.maxfriendlies = 7;                    // oyuncu + 7 = 8 kisi
 	level.friendlyMethod = "friendly chains";
-	level.friendlywave_thread = ::yeni_takviye;
-	level.ekip_mod = "takip";
+	level.ekip_mod = "bekle";
 	level.followmin = -2;
 	level.followmax = 2;
 
@@ -85,7 +95,8 @@ main()
 	level thread grup_dogur("alman_a");
 	level thread havan_kur("havan_b");
 	level thread havan_kur("havan_c");
-	level thread zincir_takip();
+	level thread ekip_beyni();
+	level thread takviye_sistemi();
 	level thread takviye_bildir();
 	level thread gorevler();
 	if (getcvar("kr_test") == "1")
@@ -121,9 +132,30 @@ tanitim()
 	wait 3;
 	level.introblack fadeOverTime(3);
 	level.introblack.alpha = 0;
+	level thread acilis_ucagi();                // perde kalkmadan 1 sn once
 	level.player freezeControls(false);
 	maps\_introscreen::introscreen_fadeOutText();
 	level notify("tanitim_bitti");
+}
+
+// ACILIS UCAGI (kullanici): perde kalkmasina 1 sn kala yuksekte bir Stuka
+// belirir, dumduz gecer; gokyuzu kutusunun DISINA cikinca motor onu cizmez
+// (kayboldugu gorulmez). Model/ses stok: vehicle_stuka_flying, stuka_planeby1.
+acilis_ucagi()
+{
+	wait 2;
+	// gokyuzu kutusunun ICINDE dogar (disarida dogan nesneyi motor cizmiyordu);
+	// karsi kosedeki sisin icinde silinir -- kayboldugu gorulmez
+	bas = (-4500, -3700, 2350);
+	son = (4500, 4100, 2350);
+	u = spawn("script_model", bas);
+	u setmodel("xmodel/vehicle_stuka_flying");
+	u.angles = vectortoangles(son - bas);
+	u moveto(son, 14);
+	wait 4.5;
+	u playsound("matmata_stuka_flyby1");
+	wait 9.6;
+	u delete();
 }
 
 // Kullanici: birincil Mosin, ikincil tabanca (TT-30); 4 el bombasi, 4 duman
@@ -179,118 +211,212 @@ ekip_kur()
 
 friendlyMethod(guy)
 {
-	if (!isdefined(guy))
-		guy = self;
-	guy.followmin = level.followmin;
-	guy.followmax = level.followmax;
-	guy.friendlyWaypoint = false;
-	guy.goalradius = 320;
-	guy setgoalentity(level.player);
 }
 
 // Ekip modu (kullanici): "takip" -> oyuncuyu izle; "hucum" -> B/C'de
 // Almanlar dogunca oraya saldir; "pencere" -> karakolun pencerelerine.
-yeni_takviye(guy)
+// ==========================================================================
+// SOVYET EKIP BEYNI (kullanici: "AI cok sacma, profesyonel yap").
+// Stok friendly chain BIRAKILDI: zincirde 5 dugum vardi, 7 asker sigmiyor,
+// 2 asker yer bulamayip duruyordu (her seferinde tam 2 -- olculdu). Her asker
+// kendi modunda kendi hedefini alir:
+//   takip   : oyuncunun arkasinda yarim cember, her askerin kendi yeri
+//   hucum   : B/C mevzisindeki gercek siper dugumleri, her askere ayri
+//   pencere : karakolun pencere onleri (metel_sinir.gsc), her askere ayri
+//   cember  : final_cember yonetir
+// Hedef HEP gercek bir zemin/dugum konumu (z=0 gibi yerin altinda hedef
+// verilince AI yol bulamayip duruyordu).
+// ==========================================================================
+ekip_beyni()
 {
-	if (level.ekip_mod == "hucum")
+	level.pencere_yer = maps\metel_sinir::pencereler();
+	level.pencere_yaw = maps\metel_sinir::pencere_yonleri();
+	for (;;)
 	{
-		guy.goalradius = 500;
-		guy setgoalpos(level.hucum_merkez);
+		wait 1;
+		ai = getaiarray("allies");
+		if (level.ekip_mod == "takip")
+			ekip_takip_et(ai);
+		else if (level.ekip_mod == "hucum")
+			ekip_hucum_et(ai);
+		else if (level.ekip_mod == "pencere")
+			ekip_pencere_et(ai);
 	}
-	else if (level.ekip_mod == "takip")
-		friendlyMethod(guy);
-	// "pencere": pencere_bekcisi yerlestirir
+}
+
+ekip_takip_et(ai)
+{
+	p = level.player.origin;
+	ileri = anglestoforward(level.player getplayerangles());
+	yaw = vectortoangles((ileri[0], ileri[1], 0))[1];
+	for (i = 0; i < ai.size; i++)
+	{
+		g = ai[i];
+		// oyuncunun arkasinda yarim cember: -70..+70 derece, 200-330 birim
+		a = yaw + 180 + (i - (ai.size - 1) / 2.0) * 24;
+		r = 200 + (i % 3) * 65;
+		hedef = zemin_bul(p + (cos(a) * r, sin(a) * r, 0));
+		g.pathenemyfightdist = 500;             // yururken de catisir
+		if (!isdefined(g.takip_hedef) || distance(g.takip_hedef, hedef) > 160 || distance(g.origin, p) > 900)
+		{
+			g.takip_hedef = hedef;
+			g.goalradius = 96;
+			g setgoalpos(hedef);
+		}
+	}
+}
+
+// HUCUM: dogrudan uzak sipere kosmaz (kullanici: "kosarak gidiyorlar, ates
+// etmeden"). Hedefe en fazla 350'lik siciramalarla, yol ustundeki siperde
+// durup ates ederek ilerler; yolda 600 birim icindeki dusmanla catisir.
+ekip_hucum_et(ai)
+{
+	for (i = 0; i < ai.size; i++)
+	{
+		g = ai[i];
+		g.pathenemyfightdist = 600;
+		g.pathenemylookahead = 600;
+		n = level.hucum_siper[i % level.hucum_siper.size];
+		if (isdefined(g.hucum_zaman) && gettime() < g.hucum_zaman)
+			continue;
+		g.hucum_zaman = gettime() + randomintrange(5000, 8000);   // siperde ates suresi
+		d = distance(g.origin, n.origin);
+		hedef = n.origin;
+		if (d > 400)
+		{
+			ara = g.origin + vectorScale(vectornormalize(n.origin - g.origin), 350);
+			s = siper_bul(ara, 300);
+			if (isdefined(s))
+				hedef = s.origin;
+			else
+				hedef = zemin_bul(ara);
+		}
+		g.goalradius = 72;
+		g setgoalpos(hedef);
+	}
+}
+
+ekip_pencere_et(ai)
+{
+	for (i = 0; i < ai.size; i++)
+	{
+		g = ai[i];
+		if (!isdefined(g.pencere_no) || !isdefined(level.pencere_sahip[g.pencere_no]) || level.pencere_sahip[g.pencere_no] != g)
+		{
+			no = pencere_bos();
+			if (no < 0)
+				continue;
+			g.pencere_no = no;
+			level.pencere_sahip[no] = g;
+			g.pencere_vardi = undefined;
+		}
+		yer = level.pencere_yer[g.pencere_no];
+		if (distance(g.origin, yer) > 20)
+		{
+			g.goalradius = 8;
+			g.ignoreall = !oyuncu_ici(g);           // yolda oyalanmaz, iceri girince savasir
+			g setgoalpos(yer);
+		}
+		else
+		{
+			g.ignoreall = false;
+			if (!isdefined(g.pencere_vardi))
+			{
+				g.pencere_vardi = true;
+				g thread pencereden_bak(level.pencere_yaw[g.pencere_no]);
+			}
+		}
+	}
+}
+
+oyuncu_ici(g)
+{
+	o = g.origin;
+	return (o[0] > -710 && o[0] < 410 && o[1] > 134 && o[1] < 806);
+}
+
+// pencereye vardiginda once disari doner, sonra savasa birakilir
+pencereden_bak(yaw)
+{
+	self endon("death");
+	self orientmode("face angle", yaw);
+	wait 2;
+	self orientmode("face default");
+}
+
+// verilen noktanin altindaki gercek zemin (yerin altina/havaya hedef verilmez)
+zemin_bul(nokta)
+{
+	tr = bulletTrace(nokta + (0, 0, 400), nokta - (0, 0, 800), false, undefined);
+	return tr["position"] + (0, 0, 4);
+}
+
+// KENDI TAKVIYE SISTEMI: oyuncu + 7. Savunmadan once guney vadisinden, savunmada
+// karakolun KUZEYINDEKI ormandan; oyuncu gormezken (dospawn gorulurse basarisiz).
+takviye_sistemi()
+{
+	level waittill("ekip_yola_cikti");
+	for (;;)
+	{
+		wait 3;
+		if (level.ekip_mod == "cember" || level.ekip_mod == "bekle")
+			continue;
+		if (getaiarray("allies").size >= 7)
+			continue;
+		ad = "takviye";
+		if (level.ekip_mod == "pencere")
+			ad = "takviye_kuzey";
+		sp = getentarray(ad, "targetname");
+		for (k = 0; k < sp.size; k++)
+		{
+			s = sp[randomint(sp.size)];
+			s.count = 1;
+			guy = s dospawn();
+			if (spawn_failed(guy))
+				continue;
+			level notify("takviye_geldi");
+			break;
+		}
+		wait 6;                                 // art arda dogmasin
+	}
 }
 
 ekip_takibe()
 {
 	level.ekip_mod = "takip";
-	ai = getaiarray("allies");
-	for (i = 0; i < ai.size; i++)
-		friendlyMethod(ai[i]);
 }
 
 // B/C'de Almanlar dogunca ekip takibi birakir, mevziye hucum eder;
 // mevzi temizlenince yeniden takibe gecer.
+// B/C'de Almanlar dogunca ekip takibi birakir, o mevzinin siperlerine hucum
+// eder; mevzi temizlenince yeniden takibe gecer.
 ekip_hucum(merkez, bayrak)
 {
 	level notify("yeni_hucum");
 	level endon("yeni_hucum");
+	level.hucum_siper = [];
+	for (i = 0; i < level.siper.size; i++)
+		if (distance((level.siper[i].origin[0], level.siper[i].origin[1], 0), (merkez[0], merkez[1], 0)) < 700)
+			level.hucum_siper[level.hucum_siper.size] = level.siper[i];
+	if (!level.hucum_siper.size)
+		return;
 	level.ekip_mod = "hucum";
-	level.hucum_merkez = merkez;
-	while (!flag(bayrak))
-	{
-		ai = getaiarray("allies");
-		for (i = 0; i < ai.size; i++)
-		{
-			ai[i].goalradius = 500;
-			ai[i] setgoalpos(merkez);
-		}
-		wait 4;
-	}
+	flag_wait(bayrak);
 	if (level.ekip_mod == "hucum")
-		ekip_takibe();
+		level.ekip_mod = "takip";
 }
 
 ekip_harekete()
 {
-	for (i = 0; i < level.ekip.size; i++)
-		if (isalive(level.ekip[i]))
-			friendlyMethod(level.ekip[i]);
-	for (i = 0; i < level.dalga_tetik.size; i++)
-		level.dalga_tetik[i] triggerOn();
+	level.ekip_mod = "takip";
 	level notify("ekip_yola_cikti");
 }
 
 // Oyuncu hangi bolgedeyse ekip o bolgenin zincirini kullanir (stok
 // trigger_friendlychain ile ayni is). Savunmada durur.
+// (stok friendly chain kullanilmiyor -- bkz. ekip_beyni)
 zincir_takip()
 {
-	level endon("savunma_basladi");
-	level waittill("ekip_yola_cikti");
-	ad = [];
-	ad[ad.size] = "fc_baslangic";	ad[ad.size] = "fc_guney";	ad[ad.size] = "fc_kavsak";
-	ad[ad.size] = "fc_bati";		ad[ad.size] = "fc_brampa";	ad[ad.size] = "fc_b";
-	ad[ad.size] = "fc_dogu";		ad[ad.size] = "fc_dogu2";	ad[ad.size] = "fc_cpatika";
-	ad[ad.size] = "fc_c";			ad[ad.size] = "fc_kuzey";	ad[ad.size] = "fc_kuzeydogu";
-	ad[ad.size] = "fc_avlu";
-	bas = [];
-	for (i = 0; i < ad.size; i++)
-		bas[i] = getnode(ad[i], "targetname");
-	zemin = getnode("fc_zemin", "targetname");
-	ust = getnode("fc_ust", "targetname");
-	simdiki = undefined;
-	for (;;)
-	{
-		wait 1;
-		p = level.player.origin;
-		secim = undefined;
-		if (oyuncu_binada())
-		{
-			if (p[2] > 200)
-				secim = ust;
-			else
-				secim = zemin;
-		}
-		else
-		{
-			en = 999999;
-			for (i = 0; i < bas.size; i++)
-			{
-				d = distance(p, bas[i].origin);
-				if (d < en)
-				{
-					en = d;
-					secim = bas[i];
-				}
-			}
-		}
-		if (!isdefined(simdiki) || simdiki != secim)
-		{
-			simdiki = secim;
-			level.player setfriendlychain(secim);
-		}
-	}
 }
 
 oyuncu_binada()
@@ -305,7 +431,7 @@ takviye_bildir()
 	son = 0;
 	for (;;)
 	{
-		level waittill("friendly_died");
+		level waittill("takviye_geldi");
 		if (gettime() - son < 240000)
 			continue;
 		wait 6;
@@ -495,6 +621,7 @@ siper_onbellek()
 hedef_bekle(sure)
 {
 	self endon("goal");
+	self endon("catismaya_gir");
 	wait sure;
 }
 
@@ -568,6 +695,7 @@ engeller_kur()
 {
 	level.engel_bc = getent("engel_bc", "targetname");
 	level.engel_bc engel_indir();
+	level thread ust_kapilar();
 	level.savunma_duvar = getent("savunma_duvar", "targetname");
 	level.sinir = maps\metel_sinir::cokgen();
 	level thread sinir_bekcisi();
@@ -608,6 +736,162 @@ cokgen_icinde(p, poli)
 	return ic;
 }
 
+// --------------------------------------------------------------------------
+// UST KAT KAPILARI
+// --------------------------------------------------------------------------
+ust_kapilar()
+{
+	level.kapi_dogu = getent("kapi_dogu", "targetname");
+	level.kapi_bati = getent("kapi_bati", "targetname");
+	level.kapi_dogu engel_indir();
+	level.kapi_bati engel_indir();
+	wait 0.2;
+	level.kapi_dogu disconnectpaths();          // kapali kapidan asker gecmesin
+	level.kapi_bati disconnectpaths();
+	level thread sag_kapi_oyuncu();
+	level thread sol_kapi_pusu();
+	level waittill("kapilari_ac");
+	level.kapi_bati kapi_kir(165, "kiymik");        // sag kapiyi oyuncu acar
+}
+
+// kapi menteseden odanin icine duz acilir; yalniz kirilma sesi (efekt yok)
+kapi_kir(aci, efekt)
+{
+	if (isdefined(self.kirildi))
+		return;
+	self.kirildi = true;
+	self playsound("eldaba_doorbreak");
+	self connectpaths();                        // kapi esigi yeniden gecilebilir
+	self rotateyaw(aci, 0.9, 0.1, 0.4);         // tam acilir (165), kanat kati kalir
+}
+
+// sag (dogu) oda: oyuncu F ile kirar
+sag_kapi_oyuncu()
+{
+	t = getent("kapi_dogu_tetik", "targetname");
+	t triggerOff();                             // savunmaya kadar kilitli (kullanici)
+	level waittill("kapilari_ac");
+	t triggerOn();
+	t sethintstring(&"METEL_PLATFORM_KAPI_KIR");
+	t waittill("trigger");
+	t delete();
+	level.kapi_dogu kapi_kir(-165, "kiymik");
+}
+
+// sol (bati) oda: oyuncu merdivenin son basamagina gelince arkadaki Alman
+// kapiyi kirar ve hemen ates eder
+// sol (bati) oda: oyuncu merdivenin son basamagina gelince arkada iki Alman
+// dogar; 1 sn sonra kapi carparak acilir, Almanlar cikip saldirir
+sol_kapi_pusu()
+{
+	sp = getentarray("kapi_alman", "targetname");
+	for (;;)
+	{
+		p = level.player.origin;
+		if (p[0] > -330 && p[0] < -180 && p[1] > 600 && p[1] < 700 && p[2] > 190)
+			break;
+		if (flag("a_temiz"))
+		{
+			for (i = 0; i < sp.size; i++)
+				sp[i] delete();
+			return;
+		}
+		wait 0.1;
+	}
+	alman = [];
+	for (i = 0; i < sp.size; i++)
+	{
+		sp[i].count = 1;
+		g = sp[i] stalingradspawn();
+		sp[i] delete();
+		if (spawn_failed(g))
+			continue;
+		g.goalradius = 16;
+		g.ignoreall = true;                     // kapi acilana kadar kimse saldirmaz
+		g.ignoreme = true;
+		g setgoalpos(g.origin);
+		alman[alman.size] = g;
+	}
+	wait 1;
+	level.kapi_bati kapi_kir(165, "toz");
+	wait 0.9;                                   // kanat tamamen acilsin
+	for (i = 0; i < alman.size; i++)
+	{
+		if (!isalive(alman[i]))
+			continue;
+		alman[i].ignoreall = false;
+		alman[i].ignoreme = false;
+		alman[i].favoriteenemy = level.player;
+		alman[i].goalradius = 96;
+		alman[i] setgoalpos(level.player.origin);
+		wait 0.4;
+	}
+}
+
+// DURBUNLU MOSIN: kasada degistirme noktasi. Elindeki silahla yer degistirir;
+// birakilan silah kasada (parlamadan) kalir ve geri alinabilir.
+durbunlu_mosin_hedefi()
+{
+	m = getent("durbunlu_mosin", "targetname");
+	t = getent("mosin_tetik", "targetname");
+	if (!isdefined(m) || !isdefined(t))
+		return;
+	yer = m.origin;
+	aci = m.angles;
+	objective_add(6, "active", &"METEL_OBJ_KAPI", yer);
+	objective_current(4, 6);
+	kasadaki = "mosin_nagant_sniper";
+	t sethintstring(&"METEL_PLATFORM_MOSIN_AL");
+	for (;;)
+	{
+		t waittill("trigger");
+		elde = level.player getcurrentweapon();
+		if (elde == "none" || elde == kasadaki)
+			continue;
+		model = silah_modeli(elde);
+		level.player takeweapon(elde);
+		level.player giveweapon(kasadaki);
+		level.player givemaxammo(kasadaki);
+		level.player switchtoweapon(kasadaki);
+		if (kasadaki == "mosin_nagant_sniper")
+		{
+			objective_state(6, "done");
+			objective_current(4);
+		}
+		kasadaki = elde;
+		if (isdefined(m))
+			m delete();
+		m = undefined;
+		if (isdefined(model))
+		{
+			z = 0;
+			if (kasadaki == "tt30")
+				z = 2;
+			m = spawn("script_model", yer + (0, 0, z));
+			m.angles = aci;
+			m setmodel(model);
+		}
+		if (kasadaki == "mosin_nagant_sniper")
+			t sethintstring(&"METEL_PLATFORM_MOSIN_AL");
+		else
+			t sethintstring(&"METEL_PLATFORM_MOSIN_BIRAK");
+		while (level.player usebuttonpressed())
+			wait 0.05;
+		wait 0.3;
+	}
+}
+
+silah_modeli(silah)
+{
+	if (silah == "mosin_nagant_sniper")
+		return "xmodel/weapon_mosinnagantscoped_cloth";
+	if (silah == "mosin_nagant")
+		return "xmodel/weapon_mosinnagant";
+	if (silah == "tt30")
+		return "xmodel/weapon_tt30";
+	return undefined;
+}
+
 // SAVUNMA: kapi ve pencerelere yalniz oyuncuyu durduran duvar (clip_player)
 // iner -- ekip iceri girdikten sonra (en fazla 25 sn beklenir). Yol agi bu
 // duvar yokken hesaplandi; kacis baslayinca duvar kalkar.
@@ -619,11 +903,27 @@ savunma_duvari()
 			break;
 		wait 1;
 	}
-	while (!oyuncu_binada())
+	while (!oyuncu_binada() || oyuncu_aciklikta())
 		wait 0.25;
 	level.savunma_duvar engel_indir();
 	level waittill("almanlar_kaciyor");
 	level.savunma_duvar moveZ(2000, 0.05);
+	ai = getaiarray("allies");
+	for (i = 0; i < ai.size; i++)
+		ai[i].ignoreall = false;
+}
+
+// oyuncu bir pencere/kapi acikligina 80 birimden yakin mi (duvar inerken
+// ustune binip oyuncuyu zeminin altina itiyordu -- kullanici)
+oyuncu_aciklikta()
+{
+	p = level.player.origin;
+	for (i = 0; i < level.pencere_yer.size; i++)
+		if (distance((p[0], p[1], 0), (level.pencere_yer[i][0], level.pencere_yer[i][1], 0)) < 80)
+			return true;
+	if (distance((p[0], p[1], 0), (-150, 126, 0)) < 110 || distance((p[0], p[1], 0), (-60, 814, 0)) < 110)
+		return true;
+	return false;
 }
 
 ekip_icerde()
@@ -731,8 +1031,11 @@ gorevler()
 	leonov_der("savunma");
 	while (!oyuncu_binada())
 		wait 0.5;
+	autoSaveByName("savunma_basi");             // kullanici: binaya girince kayit
 	level thread savunma_duvari();              // oyuncu binadan cikamaz (gercek duvar)
-	wait 8;
+	level notify("kapilari_ac");                // pencerelere ulasilsin
+	level thread durbunlu_mosin_hedefi();
+	wait 13;                                    // kullanici: binaya girdikten 15 sn sonra
 	sis_patlat();                               // saldiridan hemen once sis
 	wait 2;
 	hurra();
@@ -751,6 +1054,7 @@ gorevler()
 	autoSaveByName("savunma");
 	level thread muzik("metel_muzik_final");   // final muzigi dongude
 	level thread leonov_der("kacis");
+	level thread sovyet_kamyonlari();
 
 	// 4) FINAL: herkes disari, avluda cember; oyuncu icin bir bosluk
 	merkez = getent("daire_merkez", "targetname").origin;
@@ -770,7 +1074,6 @@ gorevler()
 	level notify("oyuncu_cemberde");
 	leonov_der("final1");
 	leonov_der("final2");
-	level thread zafer_atesi();
 	iprintlnbold(&"METEL_BITTI");
 	wait 3;                                     // konusma bitti + 3 sn
 	bolum_sonu();
@@ -860,42 +1163,24 @@ ekip_pencerelere()
 			level.pencere[level.pencere.size] = alt[i];
 	}
 	level.pencere_sahip = [];
-	level thread pencere_bekcisi();
+	level.ekip_mod = "pencere";
 }
 
+// (ekip_beyni pencere modu yonetir)
 pencere_bekcisi()
 {
-	level endon("almanlar_kaciyor");
-	for (;;)
-	{
-		ai = getaiarray("allies");
-		for (i = 0; i < ai.size; i++)
-		{
-			g = ai[i];
-			if (!isdefined(g.pencere_no))
-			{
-				no = pencere_bos();
-				if (no < 0)
-					continue;
-				g.pencere_no = no;
-				level.pencere_sahip[no] = g;
-			}
-			n = level.pencere[g.pencere_no];
-			if (distance(g.origin, n.origin) > 40)
-			{
-				g.goalradius = 24;
-				g setgoalpos(n.origin);         // konum hedefi (setgoalnode ile kimse kipirdamadi)
-			}
-		}
-		wait 4;
-	}
 }
 
 pencere_bos()
 {
-	for (i = 0; i < level.pencere.size; i++)
+	for (i = 0; i < level.pencere_yer.size; i++)
+	{
+		w = level.pencere_yer[i];
+		if (w[2] > 200 && w[0] > 26 && !isdefined(level.kapi_dogu.kirildi))
+			continue;                           // kilitli dogu ust oda
 		if (!isdefined(level.pencere_sahip[i]) || !isalive(level.pencere_sahip[i]))
 			return i;
+	}
 	return -1;
 }
 
@@ -950,19 +1235,46 @@ karsi_saldiri()
 	yon[0] = getentarray("karsi_bati", "targetname");
 	yon[1] = getentarray("karsi_dogu", "targetname");
 	yon[2] = getentarray("karsi_guney", "targetname");
+	// her yonun haritaya GIRIS noktasi (yolun ic kismi). Olculdu: harita
+	// disinda dogup binaya kus ucusu ilerleyen asker tepe uzerinde dugum
+	// bulamayip dogdugu yerde kaliyordu.
+	level.giris_nokta = [];
+	level.giris_nokta[0] = (-1740, -600, 0);       // bati yolu ici
+	level.giris_nokta[1] = (2190, 0, 0);           // dogu yolu ici
+	level.giris_nokta[2] = (60, -1980, 0);         // guney yolu ici
+	for (i = 0; i < 3; i++)
+		level.giris_nokta[i] = zemin_bul(level.giris_nokta[i]);
+	// yol noktalari: dogudan gelen once guney koprusunden gecer (olculdu: dere
+	// kiyisinda, hedef suya dustugu icin takiliyordu)
+	level.giris_yol = [];
+	for (i = 0; i < 3; i++)
+	{
+		level.giris_yol[i] = [];
+		level.giris_yol[i][0] = level.giris_nokta[i];
+	}
+	level.giris_yol[1][1] = zemin_bul((1720, -600, 0));    // kopru dogu ucu
+	level.giris_yol[1][2] = zemin_bul((1030, -620, 0));    // kopru bati ucu
 	while (level.karsi_dogan < level.karsi_toplam)
 	{
 		parti = randomintrange(5, 8);           // 5-7
 		for (k = 0; k < parti && level.karsi_dogan < level.karsi_toplam; k++)
 		{
-			grup = yon[level.karsi_dogan % 3];
+			yi = level.karsi_dogan % 3;
+			grup = yon[yi];
 			s = grup[int(level.karsi_dogan / 3) % grup.size];
+			while (getaiarray("axis").size + getaiarray("allies").size >= 26)
+				wait 1;                         // motorun AI siniri: araclara yer kalsin
 			s.count = 1;
 			guy = s stalingradspawn();
 			if (spawn_failed(guy))
 				continue;
 			level.karsi_dogan++;
 			guy.dogus = s.origin;
+			guy.giris_yol = level.giris_yol[yi];
+			guy.kacis_yol = [];                         // geldigi yolun tersi
+			for (w = guy.giris_yol.size - 1; w >= 0; w--)
+				guy.kacis_yol[guy.kacis_yol.size] = guy.giris_yol[w];
+			guy.kacis_yol[guy.kacis_yol.size] = s.origin;
 			guy thread karsi_saldirgan();
 			wait 0.25;
 		}
@@ -971,43 +1283,64 @@ karsi_saldiri()
 }
 
 // karakola dogru siperden sipere ilerler, yakininda binaya yuklenir
+// KARSI SALDIRGAN: kendi yolundan haritaya girer, sonra DOGRUDAN karakolun
+// zemin/ust kat noktalarina saldirir; yolda catisir, baska bolgeye sapmaz.
+// KARSI SALDIRGAN: kendi yolundan haritaya girer, sonra karakolun zemin/ust
+// kat noktalarina saldirir. Dogustan 6 sn sonra vurulur ya da dusman gorurse
+// bulundugu yerde siper alip catisir (10-15 sn), sonra binaya devam eder.
 karsi_saldirgan()
 {
 	self endon("death");
 	self endon("kaciyor");
-	hedef = (-150, 360, 0);
+	self.pathenemyfightdist = 900;
+	self.pathenemylookahead = 900;
+	self thread savas_tepkisi();
 	wait randomfloatrange(0.3, 1.5);
+	if (isdefined(self.giris_yol))
+	{
+		for (w = 0; w < self.giris_yol.size; w++)
+		{
+			self catisma_bekle();
+			self.goalradius = 160;
+			self setgoalpos(self.giris_yol[w]);
+			self hedef_bekle(40);
+		}
+	}
 	for (;;)
 	{
-		d = distance((self.origin[0], self.origin[1], 0), hedef);
-		if (d < 800)
-		{
-			// kullanici: binanin alt ve ust katina yonelsinler
-			n = level.bina_ic[randomint(level.bina_ic.size)];
-			self.goalradius = 64;
-			self setgoalpos(n.origin);
-			self hedef_bekle(20);
-			wait randomfloatrange(4, 8);
-			continue;
-		}
-		adim = d - 400;
-		if (adim > 600)
-			adim = 600;
-		ara = self.origin + vectorScale(vectornormalize(hedef - (self.origin[0], self.origin[1], 0)), adim);
-		n = siper_bul(ara, 400);
-		if (isdefined(n))
-		{
-			self.goalradius = 96;
-			self setgoalnode(n);
-		}
-		else
-		{
-			self.goalradius = 256;
-			self setgoalpos(ara);
-		}
-		self hedef_bekle(12);
-		wait randomfloatrange(2, 5);
+		self catisma_bekle();
+		n = level.bina_ic[randomint(level.bina_ic.size)];
+		self.goalradius = 64;
+		self setgoalpos(n.origin);
+		self hedef_bekle(20);
+		wait randomfloatrange(2, 4);
 	}
+}
+
+// vurulunca ya da dusman gorunce: yerinde siper al, catis
+savas_tepkisi()
+{
+	self endon("death");
+	self endon("kaciyor");
+	wait 6;
+	for (;;)
+	{
+		self waittill_any("damage", "enemy");
+		self.catismada = true;
+		self notify("catismaya_gir");
+		self.goalradius = 500;                  // cevredeki siperleri kullanir
+		self setgoalpos(self.origin);
+		wait randomfloatrange(10, 15);
+		self.catismada = undefined;
+		self notify("catisma_bitti");
+		wait 4;
+	}
+}
+
+catisma_bekle()
+{
+	if (isdefined(self.catismada))
+		self waittill("catisma_bitti");
 }
 
 siper_bul(nokta, en_cok)
@@ -1026,15 +1359,46 @@ siper_bul(nokta, en_cok)
 	return en;
 }
 
+// Arac yolculari: stok spawn_group doSpawn() kullanir; oyuncu gorurse ya da yer
+// doluysa SESSIZCE dogmaz (kamyonlar 4 kisiyle geliyordu). Yolcular burada
+// stalingradspawn ile dogurulur, stok binen listesine verilir.
+arac_yolcu_hazirla(binen, ad, sinir)
+{
+	for (t = 0; t < 30; t++)
+	{
+		if (getaiarray().size <= sinir)
+			break;
+		wait 1;
+	}
+	sp = getentarray(ad + "_asker", "targetname");
+	ai = [];
+	for (i = 0; i < sp.size; i++)
+	{
+		sp[i].count = 1;
+		g = sp[i] stalingradspawn();
+		if (spawn_failed(g))
+			continue;
+		ai[ai.size] = g;
+	}
+	for (i = 0; i < sp.size; i++)
+		sp[i] delete();
+	level.script_vehicleridespawners[binen] = [];
+	level.script_vehiclerideai[binen] = ai;
+}
+
 // KARSI SALDIRI ARACLARI: once kamyon; 5 sn sonra yarim paletli (bati);
 // onun MG nisancisi olunce 10 sn sonra ikinci yarim paletli (dogu)
 arac_dalgasi()
 {
+	arac_yolcu_hazirla(1, "kamyon", 22);
 	kamyon = maps\_vehicle::scripted_spawn(1);
+	kamyon[0].baslangic = kamyon[0].origin;
 	level thread maps\_vehicle::gopath(kamyon[0]);
 	kamyon[0] thread inenler_saldirsin();
 	wait 5;
+	arac_yolcu_hazirla(2, "yaripalet1", 24);
 	yp = maps\_vehicle::scripted_spawn(2);
+	yp[0].baslangic = yp[0].origin;
 	level thread maps\_vehicle::gopath(yp[0]);
 	yp[0] thread inenler_saldirsin();
 	wait 1;
@@ -1042,7 +1406,11 @@ arac_dalgasi()
 	if (isdefined(nisanci))
 		nisanci waittill("death");
 	wait 10;
+	// motorun AI siniri: 6 yolcuya yer acilana kadar bekle (olculdu: kalabalikta
+	// yalniz sofor dogabiliyordu)
+	arac_yolcu_hazirla(3, "yaripalet2", 24);
 	yp2 = maps\_vehicle::scripted_spawn(3);
+	yp2[0].baslangic = yp2[0].origin;
 	level thread maps\_vehicle::gopath(yp2[0]);
 	yp2[0] thread inenler_saldirsin();
 	level.araclar_tamam = true;
@@ -1060,24 +1428,44 @@ mg_nisancisi(arac)
 }
 
 // arac durunca inenler karakola saldirir (yarim paletlinin MG nisancisi kalir)
+// aractan AYRILAN her yolcu hemen saldiriya gecer (aracin 'reached_end_node'
+// sinyaline bagli degil). Yarim paletlinin MG nisancisi aracta kalir.
 inenler_saldirsin()
 {
-	self waittill("reached_end_node");
-	wait 5;
 	if (!isdefined(self.riders))
 		return;
-	for (i = 0; i < self.riders.size; i++)
+	yolcu = self.riders;
+	baslangic = self.baslangic;
+	yol = undefined;
+	if (isdefined(self.kacis_yolu))
+		yol = self.kacis_yolu;
+	for (t = 0; t < 240; t++)
 	{
-		g = self.riders[i];
-		if (!isalive(g) || !issentient(g))
-			continue;
-		if (isdefined(g.script_startingposition) && g.script_startingposition == 1 && issubstr(self.vehicletype, "halftrack"))
-			continue;
-		g.dogus = self.origin;
-		g thread karsi_saldirgan();
+		wait 0.5;
+		kalan = 0;
+		for (i = 0; i < yolcu.size; i++)
+		{
+			g = yolcu[i];
+			if (!isalive(g) || isdefined(g.saldiriyor))
+				continue;
+			if (isdefined(g.script_startingposition) && g.script_startingposition == 1 && issubstr(self.vehicletype, "halftrack"))
+				continue;
+			kalan++;
+			if (!isdefined(self) || distance(g.origin, self.origin) > 150)
+			{
+				g.saldiriyor = true;
+				g.dogus = baslangic;
+				g.kacis_yol = [];
+				g.kacis_yol[0] = baslangic;
+				g thread karsi_saldirgan();
+			}
+		}
+		if (!kalan)
+			return;
 	}
 }
 
+// KACIS: herkes GELDIGI yolu tersinden izleyip kendi dogus yerinde kaybolur
 alman_kac()
 {
 	self endon("death");
@@ -1088,12 +1476,23 @@ alman_kac()
 		return;
 	}
 	self.health = 1;
-	self.goalradius = 96;
+	self.ignoreall = true;
 	self allowedstances("stand");
-	if (!isdefined(self.dogus))
-		self.dogus = getentarray("karsi_guney", "targetname")[0].origin;
-	self setgoalpos(self.dogus);
-	self waittill("goal");
+	yol = self.kacis_yol;
+	if (!isdefined(yol))
+	{
+		yol = [];
+		if (isdefined(self.dogus))
+			yol[0] = self.dogus;
+		else
+			yol[0] = getentarray("karsi_guney", "targetname")[0].origin;
+	}
+	for (w = 0; w < yol.size; w++)
+	{
+		self.goalradius = 120;
+		self setgoalpos(yol[w]);
+		self waittill("goal");
+	}
 	self delete();
 }
 
@@ -1111,7 +1510,7 @@ final_cember(merkez)
 	ai = getaiarray("allies");
 	digerleri = [];
 	for (i = 0; i < ai.size; i++)
-		if (ai[i] != g)
+		if (ai[i] != g && !isdefined(ai[i].kamyon_grubu))
 			digerleri[digerleri.size] = ai[i];
 	n = digerleri.size + 1;                     // +1 oyuncunun yeri (guney, bos)
 	level.oyuncu_yeri = merkez + (cos(270) * 150, sin(270) * 150, 0);
@@ -1143,24 +1542,158 @@ final_cember(merkez)
 // Kullanici: sonda rastgele bir PPSh'li asker (Leonov haric) havaya 30 mermi
 // atar, sonra sarjor degistirir. AI atisi stok animscripts utility.gsc kalibi
 // (self shoot(isabet, hedef)); sarjor stok combat_utility Reload().
+// Kullanici: sonda rastgele bir PPSh'li asker (Leonov haric) GUNEYE donup
+// 75 derece yukari 30 mermi atar, sonra sarjor degistirir. Mermi stok
+// magicbullet(silah, baslangic, hedef) ile namlu ucundan cikar.
 zafer_atesi()
 {
 	ai = getaiarray("allies");
 	aday = [];
 	for (i = 0; i < ai.size; i++)
-		if (ai[i] != level.leonov && issubstr(tolower(ai[i].weapon), "ppsh"))
+		if (issubstr(tolower(ai[i].weapon), "ppsh"))       // Leonov dahil
 			aday[aday.size] = ai[i];
 	if (!aday.size)
 		return;
 	g = aday[randomint(aday.size)];
 	g endon("death");
+	g orientmode("face angle", 270);
+	wait 1;
+	yon = (0, -1 * cos(75), sin(75));            // guney, 75 derece yukari
 	for (k = 0; k < 30; k++)
 	{
-		g shoot(1, g.origin + (randomintrange(-60, 60), randomintrange(-60, 60), 2000));
+		bas = g gettagorigin("tag_flash");
+		magicbullet("ppsh", bas, bas + vectorScale(yon, 3000) + (randomintrange(-80, 80), randomintrange(-80, 80), 0));
 		wait 0.08;
 	}
 	g.bulletsInClip = 0;
 	g animscripts\combat_utility::Reload(0);
+	g orientmode("face default");
+}
+
+// FINAL TAKVIYESI (kullanici): geri cekilme anindan 5 sn sonra, 5 sn arayla
+// iki Sovyet kamyonu; dogudaki askerler doguya, batidakiler batiya yayilip
+// bolgenin kontrolunu alir. Final cemberine katilmazlar.
+sovyet_kamyonlari()
+{
+	wait 5;
+	level thread sovyet_kamyonu(4, 1);
+	wait 5;
+	level thread sovyet_kamyonu(5, -1);
+}
+
+// stok decoytown godmode() kalibi: her hasarda can yeniden doldurulur
+arac_olumsuz()
+{
+	self endon("death");
+	for (;;)
+	{
+		self.health = 100000;
+		self waittill("damage");
+	}
+}
+
+sovyet_kamyonu(grup, yon)
+{
+	ad = "sovyet_bati";
+	if (grup == 4)
+		ad = "sovyet_dogu";
+	arac_yolcu_hazirla(grup, ad, 21);
+	a = maps\_vehicle::scripted_spawn(grup);
+	k = a[0];
+	k thread arac_olumsuz();                    // kullanici: patlatilamasin
+	level thread maps\_vehicle::gopath(k);
+	if (!isdefined(k.riders))
+		return;
+	yolcu = k.riders;
+	for (i = 0; i < yolcu.size; i++)
+		if (isalive(yolcu[i]))
+			yolcu[i].kamyon_grubu = yon;
+	k thread arac_durunca_yolla(yolcu);
+	for (t = 0; t < 240; t++)
+	{
+		wait 0.5;
+		kalan = 0;
+		for (i = 0; i < yolcu.size; i++)
+		{
+			g = yolcu[i];
+			if (!isalive(g) || isdefined(g.yayildi))
+				continue;
+			kalan++;
+			if (distance(g.origin, k.origin) > 150)
+			{
+				g.yayildi = true;
+				sovyet_gorev_ver(g);
+			}
+		}
+		if (!kalan)
+			return;
+	}
+}
+
+// kullanici: inenlerden 4 kisi karakolun UST katina (pencerelere), kalanlar
+// yari yariya B ve C bolgelerine dagilir
+arac_durunca_yolla(yolcu)
+{
+	self waittill("reached_end_node");
+	wait 6;                                     // inis animasyonlari biter
+	for (i = 0; i < yolcu.size; i++)
+	{
+		g = yolcu[i];
+		if (!isalive(g) || isdefined(g.yayildi))
+			continue;
+		g.yayildi = true;
+		sovyet_gorev_ver(g);
+	}
+}
+
+// kullanici: kamyondan inen HERKES karakolda siper alir; once ust kattaki bos
+// pencereler, ust kat dolunca zemin kat
+sovyet_gorev_ver(g)
+{
+	no = -1;
+	for (kat = 1; kat >= 0 && no < 0; kat--)
+		for (i = 0; i < level.pencere_yer.size; i++)
+		{
+			w = level.pencere_yer[i];
+			if ((w[2] > 200) != (kat == 1))
+				continue;
+			if (isdefined(level.pencere_sahip[i]) && isalive(level.pencere_sahip[i]))
+				continue;
+			no = i;
+			break;
+		}
+	if (no < 0)
+	{
+		ic = [];
+		for (i = 0; i < level.siper.size; i++)
+		{
+			o = level.siper[i].origin;
+			if (o[0] > -690 && o[0] < 390 && o[1] > 150 && o[1] < 790 && !isdefined(level.siper[i].sovyet))
+				ic[ic.size] = level.siper[i];
+		}
+		g.goalradius = 48;
+		if (ic.size)
+		{
+			n = ic[randomint(ic.size)];
+			n.sovyet = g;
+			g setgoalnode(n);
+		}
+		else
+			g setgoalpos(zemin_bul((-150, 470, 24)));
+		return;
+	}
+	level.pencere_sahip[no] = g;
+	g.goalradius = 16;
+	g setgoalpos(level.pencere_yer[no]);
+	g thread pencereden_bak_varinca(level.pencere_yaw[no], level.pencere_yer[no]);
+}
+
+pencereden_bak_varinca(yaw, yer)
+{
+	self endon("death");
+	while (distance(self.origin, yer) > 24)
+		wait 0.5;
+	self pencereden_bak(yaw);
 }
 
 // hayattaki herkes kendi cember yerinde mi
@@ -1219,6 +1752,40 @@ bolum_sonu()
 }
 
 // --------------------------------------------------------------------------
+// KAPI TURU (kr_tur 4): kapilar kapali / acik, baslangic yolu
+kapi_turu()
+{
+	level.player takeallweapons();
+	kd = getent("kapi_dogu", "targetname");
+	kb = getent("kapi_bati", "targetname");
+	kd engel_indir();
+	kb engel_indir();
+	setcvar("kr_adim", "0");
+	wait 3;
+	kapi_bak(1, (-120, 730, 288), (5, 180, 0));   // bati kapi kapali (holden)
+	kapi_bak(2, (-180, 730, 288), (5, 0, 0));     // dogu kapi kapali (holden)
+	kb thread kapi_kir(165, "toz");
+	kd thread kapi_kir(0 - 165, "kiymik");
+	wait 1.5;
+	kapi_bak(3, (-120, 730, 288), (5, 180, 0));   // bati kapi acik
+	kapi_bak(4, (-180, 730, 288), (5, 0, 0));     // dogu kapi acik
+	kapi_bak(5, (-560, 640, 288), (5, 25, 0));    // bati oda icinden acik kanat
+	kapi_bak(6, (198, -2340, 200), (3, 218, 0));  // baslangictan yol (gokyuzu)
+	kapi_bak(7, (90, -2620, 210), (4, 211, 0));
+	setcvar("kr_adim", "bitti");
+}
+
+kapi_bak(n, yer, aci)
+{
+	setcvar("kr_adim", "" + n);
+	for (t = 0; t < 200; t++)
+	{
+		level.player setorigin(yer);
+		level.player setplayerangles(aci);
+		wait 0.05;
+	}
+}
+
 // EKRAN TURU (kr_tur 1: genel/kus bakisi, kr_tur 3: bina ici ve mevziler)
 // --------------------------------------------------------------------------
 ekran_turu()
@@ -1236,6 +1803,11 @@ ekran_turu()
 	nokta[nokta.size] = (90, -2620, 210);    aci[aci.size] = (4, 211, 0);    // baslangictan kamyon yoluna
 	nokta[nokta.size] = (1380, 300, 120);    aci[aci.size] = (25, 90, 0);    // dere suyu
 	nokta[nokta.size] = (-150, -950, 260);   aci[aci.size] = (12, 90, 0);    // karakol dis cephe
+	if (getcvar("kr_tur") == "4")
+	{
+		level thread kapi_turu();
+		return;
+	}
 	if (getcvar("kr_tur") == "3")
 	{
 		nokta = [];
@@ -1395,32 +1967,62 @@ tani_olcum()
 {
 	level thread test_olumsuz();
 	level waittill("tanitim_bitti");
-	wait 2;
-	level.player setorigin((60, -1700, 40));
-	wait 20;
-	ai = getaiarray("allies");
-	for (i = 0; i < ai.size; i++)
-		test_yaz("bas" + i + " " + ai[i].origin + " oyuncuya " + int(distance(ai[i].origin, level.player.origin)));
-	// bina ici ulasim: herkese ic konum
-	for (i = 0; i < ai.size; i++)
+	wait 8;
+	// 1) takip: oyuncu adim adim ilerler
+	adim = [];
+	adim[0] = (60, -2000, 40);
+	adim[1] = (0, -1500, 40);
+	adim[2] = (-400, -1100, 40);
+	for (a = 0; a < adim.size; a++)
 	{
-		ai[i].goalradius = 64;
-		ai[i] setgoalpos((-150, 400, 24));
+		level.player setorigin(zemin_bul(adim[a]));
+		wait 12;
+		ai = getaiarray("allies");
+		uzak = 0;
+		for (i = 0; i < ai.size; i++)
+			if (distance(ai[i].origin, level.player.origin) > 600)
+				uzak++;
+		test_yaz("takip adim" + a + " dost " + ai.size + " uzakta " + uzak);
 	}
-	level.player setorigin((-150, -400, 40));
-	wait 30;
-	for (i = 0; i < ai.size; i++)
-		if (isalive(ai[i]))
-			test_yaz("ic" + i + " " + ai[i].origin + " hedefe " + int(distance(ai[i].origin, (-150, 400, 24))));
-	// araclar: yolcu sayisi
-	for (g = 1; g <= 3; g++)
+	// 2) yayan Almanlar: uc yonden birer asker, binaya ilerliyor mu
+	level.giris_nokta = [];
+	level.giris_nokta[0] = zemin_bul((-1740, -600, 0));
+	level.giris_nokta[1] = zemin_bul((2190, 0, 0));
+	level.giris_nokta[2] = zemin_bul((60, -1980, 0));
+	level.player setorigin(zemin_bul((-150, 470, 40)));
+	yon = [];
+	yon[0] = "karsi_bati";
+	yon[1] = "karsi_dogu";
+	yon[2] = "karsi_guney";
+	alman = [];
+	for (k = 0; k < 3; k++)
 	{
-		a = maps\_vehicle::scripted_spawn(g);
-		wait 1;
-		n = 0;
-		if (isdefined(a[0].riders))
-			n = a[0].riders.size;
-		test_yaz("arac" + g + " yolcu " + n);
+		s = getentarray(yon[k], "targetname")[0];
+		s.count = 1;
+		g = s stalingradspawn();
+		if (spawn_failed(g))
+		{
+			test_yaz("alman " + yon[k] + " DOGMADI");
+			continue;
+		}
+		g.giris_yol = [];
+		g.giris_yol[0] = level.giris_nokta[k];
+		if (k == 1)
+		{
+			g.giris_yol[1] = zemin_bul((1720, -600, 0));
+			g.giris_yol[2] = zemin_bul((1030, -620, 0));
+		}
+		g thread karsi_saldirgan();
+		g.ad = yon[k];
+		alman[alman.size] = g;
+		test_yaz("alman " + yon[k] + " dogdu " + g.origin);
+	}
+	for (t = 1; t <= 3; t++)
+	{
+		wait 20;
+		for (k = 0; k < alman.size; k++)
+			if (isalive(alman[k]))
+				test_yaz("t" + (t * 20) + " " + alman[k].ad + " binaya " + int(distance(alman[k].origin, (-150, 470, 24))) + " poz " + alman[k].origin);
 	}
 	test_yaz("tani bitti");
 }

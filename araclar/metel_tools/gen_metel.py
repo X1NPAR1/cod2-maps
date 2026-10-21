@@ -60,7 +60,7 @@ SINIR_PX = [(40, 395), (200, 205), (330, 235), (420, 105), (520, 40), (830, 28),
             (1000, 45), (1180, 95), (1240, 300), (1195, 505), (1175, 610), (1030, 815),
             (980, 825), (860, 975), (560, 970), (430, 850), (330, 700), (130, 640), (40, 560)]
 POLI = [W(*p) for p in SINIR_PX]
-SX0, SX1, SY0, SY1 = -4864, 4864, -4096, 4352            # gokyuzu kutusu (128 kati)
+SX0, SX1, SY0, SY1 = -4864, 4864, -5120, 4352            # gokyuzu kutusu (128 kati)
 ZTAVAN = 2816
 
 def _seg(px, py, a, b):
@@ -156,6 +156,13 @@ GIRIS_PX = {
     'dogu_giris': [(1360, 735), (1320, 712), (1288, 680), (1272, 640), (1266, 585), (1240, 535), (1200, 505), (1150, 495), (1080, 505),
                    (1005, 520)],
 }
+# Kullanici (ucuncu tur): baslangictan guney yola bakinca vadi y=-3840'ta bitiyor,
+# gokyuzu kutusu (eski SY0=-4096) yalniz 256 birim gerideydi -> gok gorunuyordu.
+# Gok kutusu guneye -5120'ye buyutuldu; vadi eski ucun OTESINDE (GUNEY_PX ve
+# arac yolu GH degismeden) SAGA (batiya, sonra kuzeybatiya) kivrilip tepenin
+# arkasinda kapanir. Yalniz oyma ve yol yuzeyi icin; arac yolu GH[0]'da baslar.
+GUNEY_UZANTI_PX = [(350, 1160), (300, 1174), (255, 1168), (222, 1145), (200, 1115)]
+GIRIS_PX['guney_uzanti'] = GUNEY_UZANTI_PX
 GIRIS_W = {k: [W(*p) for p in v] for k, v in GIRIS_PX.items()}
 def guney_mes(x, y):
     # en yakin giris yolu (vadi oyma icin)
@@ -194,6 +201,7 @@ YOLLAR = {
     'guney': ([(px, py, None) for (px, py) in GUNEY_PX[:-1]] + [(640, 655, 0)], 150),
     # karsi saldiri araclari: bati ve dogudan harita disindan gelen giris yollari
     'bati_giris': ([(px, py, None) for (px, py) in GIRIS_PX['bati_giris']], 140),
+    'guney_uzanti': ([(px, py, None) for (px, py) in GUNEY_UZANTI_PX], 150),
     'dogu_giris': ([(px, py, None) for (px, py) in GIRIS_PX['dogu_giris']], 140),
     'bati': ([(640, 655, 0), (560, 640, None), (470, 618, None), (395, 565, None),
               (350, 495, None), (335, 425, None), (352, 372, None), (405, 348, None)], 150),
@@ -550,8 +558,8 @@ for (a, b, c, d) in ((X0 - 6, Y0 - 6, X1 + 6, Y0), (X0 - 6, Y1, X1 + 6, Y1 + 6),
 mx0, my0, mx1, my1 = MERDIVEN
 dm = {'*': TRIM, '+z': TABAN, '-z': SIVA}
 kutu6(X0 + K, Y0 + K, Z_UST - 16, mx0, Y1 - K, Z_UST, dm)
-kutu6(mx1, Y0 + K, Z_UST - 16, X1 - K, Y1 - K, Z_UST, dm)
-kutu6(mx0, Y0 + K, Z_UST - 16, mx1, my0, Z_UST, dm)
+kutu6(mx1, Y0 + K, Z_UST - 16, X1 - K, Y1 - K, Z_UST, dict(dm, **{'-x': SIVA}))
+kutu6(mx0, Y0 + K, Z_UST - 16, mx1, my0, Z_UST, dict(dm, **{'+y': SIVA}))
 kutu6(mx0, my1, Z_UST - 16, mx1, Y1 - K, Z_UST, dm)
 # tavan
 kutu6(X0, Y0, Z_TAVAN, X1, Y1, Z_TAVAN + 16, {'*': TRIM, '-z': SIVA, '+z': CAULK})
@@ -570,12 +578,9 @@ for k in range(n):
     yb = my0 + k * kosu
     zt = Z_TEMEL + (k + 1) * (Z_UST - Z_TEMEL) / float(n)
     H.kutu6(mx0, yb, Z_TEMEL, mx1, my1 if k == n - 1 else yb + kosu, zt,
-            {'*': TRIM, '+z': BASAMAK, '-y': BASAMAK})
+            {'*': TRIM, '+z': TABAN, '-y': TRIM},
+            olcek=(mx1 - mx0, kosu, -mx0, -yb))     # her basamaga oturan tahta
 # merdiven korkulugu (bosluk kenari: dogu ve guney)
-H.kutu(mx1, my0, Z_UST, mx1 + 6, my1, Z_UST + 40, TRIM, detay=True)
-H.kutu(mx0, my0 - 6, Z_UST, mx1 + 6, my0, Z_UST + 40, TRIM, detay=True)
-for yy in range(int(my0), int(my1) + 1, 80):
-    H.kutu(mx1, yy, Z_UST, mx1 + 6, yy + 6, Z_UST + 40, KIRIS, detay=True)
 H.kutu(mx1, my0, Z_UST, mx1 + 8, my1, Z_UST + 48, SINIR, SINIR, alt=SINIR)
 H.kutu(mx0, my0 - 8, Z_UST, mx1 + 8, my0, Z_UST + 48, SINIR, SINIR, alt=SINIR)
 
@@ -601,7 +606,7 @@ H.kama(-150 - 120, Y0 - 150, -150 + 120, Y0, -16, 0, Z_TEMEL, '+y', TEMEL, TEMEL
 for k, dy in enumerate((0, 50, 100)):
     pass
 for xx in (-150 - 112, -150 + 104):
-    H.kutu(xx, Y0 - 146, Z_TEMEL, xx + 12, Y0 - 134, 190, TRIM, detay=True)
+    H.kutu(xx, Y0 - 146, -16, xx + 12, Y0 - 134, 190, TRIM, detay=True)
 H.kama(-150 - 140, Y0 - 170, -150 + 140, Y0, 190, 196, 236, '+y', CATI, TRIM, alt=TRIM, detay=True)
 
 H.kama(-130, Y1, 10, Y1 + 110, -16, 0, Z_TEMEL, '-y', TEMEL, TEMEL, alt=CAULK)   # arka kapi rampasi
@@ -708,6 +713,32 @@ for yk, zk in zip(KOPRU_Y, KOPRU_Z):
     xr = dere_x(yk)
     bc.append((xr - 8, yk - 130, zk - 60, xr + 8, yk + 130, zk + 400))
 engel('engel_bc', bc)
+
+# UST KAT KAPILARI (kullanici): sag (dogu) oda kapisini oyuncu F ile kirar; sol
+# (bati) oda kapisini merdivenin ustune gelince bir Alman kirip saldirir.
+# Kapi = script_brushmodel + mentese 'origin' firca. Derlemede +2000 yukarida
+# (yol agi kapi ACIKken hesaplansin -- olculen kural); GSC yerine indirir.
+KAPI_M = 'mtl_caen_door_01'                      # gercek tek kanat kapi resmi (256x512, incelendi)
+def kapi_kanat(ad, xw, mentese_y):
+    bl = []
+    y0k, y1k = 684, 776
+    z0, z1 = Z_UST + ENGEL_KAYDIR, Z_UST + 124 + ENGEL_KAYDIR
+    H.kutu6(xw - 3, y0k, z0, xw + 3, y1k, z1, {'*': TRIM, '-x': KAPI_M, '+x': KAPI_M},
+            olcek=(y1k - y0k, z1 - z0, -y0k, -z0), hedef=bl)    # resim kanada tam oturur
+    H.kutu(xw - 4, mentese_y - 4, z0 + 56, xw + 4, mentese_y + 4, z0 + 64, 'origin', 'origin', alt='origin', hedef=bl)
+    H.ent('script_brushmodel', brushlar=bl, targetname=ad)
+kapi_kanat('kapi_dogu', XE, 686)
+kapi_kanat('kapi_bati', XW, 686)
+# sag kapiyi kirma tetigi (merdiven sahanligi tarafinda)
+bl = []
+H.kutu(XE - 70, 690, Z_UST, XE - 8, 770, Z_UST + 100, 'trigger', 'trigger', alt='trigger', hedef=bl)
+H.ent('trigger_use', brushlar=bl, targetname='kapi_dogu_tetik')
+# durbunlu Mosin: sag (dogu) odadaki kasanin ustunde (crate01 ustu = taban + 26)
+H.ent('script_model', model='xmodel/weapon_mosinnagantscoped_cloth_obj', origin=(330, 740, Z_UST + 29),
+      angles=(0, 90, 90), targetname='durbunlu_mosin')
+bl = []
+H.kutu(285, 700, Z_UST, 375, 780, Z_UST + 80, 'trigger', 'trigger', alt='trigger', hedef=bl)
+H.ent('trigger_use', brushlar=bl, targetname='mosin_tetik')
 # sinir gecitleri acik: oyuncuyu GSC tutar (metel_sinir.gsc)
 
 # avlu duvari (alcak tugla, kapilar guney ve kuzey, x=-150)
@@ -893,7 +924,7 @@ def dogrula():
     return eksik, eksik_m
 
 H.ent('misc_turret', model='xmodel/weapon_mg42', weaponinfo='mg42_bipod_stand',
-      origin=(SX0 + 300, SY0 + 300, round(yukseklik(SX0 + 300, SY0 + 300), 1)), angles=(0, 0, 0))
+      origin=(-4564, -3796, round(yukseklik(-4564, -3796), 1)), angles=(0, 0, 0))
 
 def sinir_gsc():
     o = ['// metel_sinir.gsc -- gen_metel.py URETIR, elle duzenlemeyin.',
@@ -903,6 +934,31 @@ def sinir_gsc():
     for (x, y) in POLI:
         o.append('\tp[p.size] = (%d, %d, 0);' % (round(x), round(y)))
     o += ['\treturn p;', '}', '']
+    # Pencere onleri (kullanici: "asker tam pencerenin onunde dursun"): her
+    # pencerenin duvardan 30 birim icerisi; yaw = disari. Oncelik: guney
+    # (saldiri yonu), sonra bati/dogu, en son kuzey.
+    pen = []
+    sira = {'g': 0, 'b': 1, 'd': 1, 'k': 2}
+    for yon, L in DIS_DELIK.items():
+        for (da, db, za, zb) in L:
+            if zb - za >= 120:
+                continue                                   # kapi
+            m = (da + db) / 2.0
+            z = (Z_TEMEL if za < Z_UST else Z_UST) + 4
+            if yon == 'g': x, y, yaw = m, Y0 + K + 30, 270
+            elif yon == 'k': x, y, yaw = m, Y1 - K - 30, 90
+            elif yon == 'b': x, y, yaw = X0 + K + 30, Y0 + m, 180
+            else: x, y, yaw = X1 - K - 30, Y0 + m, 0
+            pen.append((sira[yon], x, y, z, yaw))
+    pen.sort()
+    # GSC vektoru 1 ya da 3 bilesenli olabilir (olculdu: 4'lu derleme hatasi)
+    o += ['pencereler()', '{', '\tp = [];']
+    for (_, x, y, z, yaw) in pen:
+        o.append('\tp[p.size] = (%d, %d, %d);' % (round(x), round(y), round(z)))
+    o += ['\treturn p;', '}', '', 'pencere_yonleri()', '{', '\ty = [];']
+    for (_, x, y, z, yaw) in pen:
+        o.append('\ty[y.size] = %d;' % yaw)
+    o += ['\treturn y;', '}', '']
     open(os.path.join(KOK, 'main', 'maps', 'metel_sinir.gsc'), 'w', newline='\r\n').write('\n'.join(o) + '\n')
 sinir_gsc()
 
