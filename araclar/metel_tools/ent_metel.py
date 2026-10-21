@@ -218,11 +218,13 @@ def yerlestir(G):
     # 1. YOL DUGUMLERI
     # =====================================================================
     ADIM = 150
-    for x in range(G.SX0 + 96, G.SX1 - 95, ADIM):
-        for y in range(G.SY0 + 96, G.SY1 - 95, ADIM):
+    # izgara baslangici SABIT (-4768, -4000): gokyuzu kutusu buyuyunce izgara kayip
+    # B tepesinde ada/in solid uretti (olculdu); kutu ne olursa olsun ayni noktalar
+    gx0 = -4768 - ADIM * ((-4768 - (G.SX0 + 96)) // ADIM)
+    gy0 = -4000 - ADIM * ((-4000 - (G.SY0 + 96)) // ADIM)
+    for x in range(gx0, G.SX1 - 95, ADIM):
+        for y in range(gy0, G.SY1 - 95, ADIM):
             if not serbest(x, y) or not egim_ok(x, y):
-                continue
-            if (x, y) in ((1082, -2474), (4382, -1424)):     # baglantisiz kalan tekil noktalar (olculdu)
                 continue
             ent('node_pathnode', origin=(x, y, zz(x, y)))
     # yollar boyunca sik dugum (rampa ve patika icin zorunlu: egim_ok yalniz yolda gevser)

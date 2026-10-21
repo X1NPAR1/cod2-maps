@@ -60,7 +60,7 @@ SINIR_PX = [(40, 395), (200, 205), (330, 235), (420, 105), (520, 40), (830, 28),
             (1000, 45), (1180, 95), (1240, 300), (1195, 505), (1175, 610), (1030, 815),
             (980, 825), (860, 975), (560, 970), (430, 850), (330, 700), (130, 640), (40, 560)]
 POLI = [W(*p) for p in SINIR_PX]
-SX0, SX1, SY0, SY1 = -4864, 4864, -5120, 4352            # gokyuzu kutusu (128 kati)
+SX0, SX1, SY0, SY1 = -6144, 6144, -5120, 4352            # gokyuzu kutusu (128 kati)
 ZTAVAN = 2816
 
 def _seg(px, py, a, b):
@@ -163,6 +163,13 @@ GIRIS_PX = {
 # arkasinda kapanir. Yalniz oyma ve yol yuzeyi icin; arac yolu GH[0]'da baslar.
 GUNEY_UZANTI_PX = [(350, 1160), (300, 1174), (255, 1168), (222, 1145), (200, 1115)]
 GIRIS_PX['guney_uzanti'] = GUNEY_UZANTI_PX
+# Ayni sorun bati/dogu Alman giris yollarinda (uclar gok kutusuna 424/544 birim):
+# gok kutusu SX0/SX1 = +-6144'e buyutuldu, vadiler eski ucun otesinde kivrilip
+# tepenin arkasinda kapanir. BH/DH/GIRIS_PX noktalari degismez.
+BATI_UZANTI_PX = [(-100, 830), (-150, 845), (-195, 830), (-225, 800), (-240, 765)]
+DOGU_UZANTI_PX = [(1360, 735), (1410, 750), (1455, 740), (1485, 712), (1500, 680)]
+GIRIS_PX['bati_uzanti'] = BATI_UZANTI_PX
+GIRIS_PX['dogu_uzanti'] = DOGU_UZANTI_PX
 GIRIS_W = {k: [W(*p) for p in v] for k, v in GIRIS_PX.items()}
 def guney_mes(x, y):
     # en yakin giris yolu (vadi oyma icin)
@@ -202,6 +209,8 @@ YOLLAR = {
     # karsi saldiri araclari: bati ve dogudan harita disindan gelen giris yollari
     'bati_giris': ([(px, py, None) for (px, py) in GIRIS_PX['bati_giris']], 140),
     'guney_uzanti': ([(px, py, None) for (px, py) in GUNEY_UZANTI_PX], 150),
+    'bati_uzanti': ([(px, py, None) for (px, py) in BATI_UZANTI_PX], 140),
+    'dogu_uzanti': ([(px, py, None) for (px, py) in DOGU_UZANTI_PX], 140),
     'dogu_giris': ([(px, py, None) for (px, py) in GIRIS_PX['dogu_giris']], 140),
     'bati': ([(640, 655, 0), (560, 640, None), (470, 618, None), (395, 565, None),
               (350, 495, None), (335, 425, None), (352, 372, None), (405, 348, None)], 150),
@@ -719,16 +728,20 @@ engel('engel_bc', bc)
 # Kapi = script_brushmodel + mentese 'origin' firca. Derlemede +2000 yukarida
 # (yol agi kapi ACIKken hesaplansin -- olculen kural); GSC yerine indirir.
 KAPI_M = 'mtl_caen_door_01'                      # gercek tek kanat kapi resmi (256x512, incelendi)
-def kapi_kanat(ad, xw, mentese_y):
+def kapi_kanat(ad, xw, mentese_y, oda):
     bl = []
     y0k, y1k = 684, 776
     z0, z1 = Z_UST + ENGEL_KAYDIR, Z_UST + 124 + ENGEL_KAYDIR
-    H.kutu6(xw - 3, y0k, z0, xw + 3, y1k, z1, {'*': TRIM, '-x': KAPI_M, '+x': KAPI_M},
-            olcek=(y1k - y0k, z1 - z0, -y0k, -z0), hedef=bl)    # resim kanada tam oturur
-    H.kutu(xw - 4, mentese_y - 4, z0 + 56, xw + 4, mentese_y + 4, z0 + 64, 'origin', 'origin', alt='origin', hedef=bl)
-    H.ent('script_brushmodel', brushlar=bl, targetname=ad)
-kapi_kanat('kapi_dogu', XE, 686)
-kapi_kanat('kapi_bati', XW, 686)
+    H.kutu6(xw - 5, y0k, z0, xw + 5, y1k, z1, {'*': TRIM, '-x': KAPI_M, '+x': KAPI_M},
+            olcek=(y1k - y0k, z1 - z0, y0k, -z0), hedef=bl)     # yatay +min, dikey -min (v ekseni ters; goruntuden olculdu)
+    # mentese ODA tarafindaki duvar yuzu kosesinde (duvar 12 kalin: xw+-6). Kanat
+    # 178 derece donunce duvar yuzune duz yaslanir, duvarin icine girmez (olculdu:
+    # ortadaki mentese ile 165 derecede kanat duvar kalinligini kesiyordu)
+    mx = xw + 6 * oda
+    H.kutu(mx - 4, mentese_y - 4, z0 + 56, mx + 4, mentese_y + 4, z0 + 64, 'origin', 'origin', alt='origin', hedef=bl)
+    H.ent('script_brushmodel', brushlar=bl, targetname=ad, spawnflags=1)   # DYNAMICPATH: connectpaths icin sart
+kapi_kanat('kapi_dogu', XE, 682, 1)       # dogu oda +x tarafinda
+kapi_kanat('kapi_bati', XW, 682, -1)      # bati oda -x tarafinda
 # sag kapiyi kirma tetigi (merdiven sahanligi tarafinda)
 bl = []
 H.kutu(XE - 70, 690, Z_UST, XE - 8, 770, Z_UST + 100, 'trigger', 'trigger', alt='trigger', hedef=bl)

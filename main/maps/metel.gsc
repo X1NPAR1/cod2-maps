@@ -751,7 +751,7 @@ ust_kapilar()
 	level thread sag_kapi_oyuncu();
 	level thread sol_kapi_pusu();
 	level waittill("kapilari_ac");
-	level.kapi_bati kapi_kir(165, "kiymik");        // sag kapiyi oyuncu acar
+	level.kapi_bati kapi_kir(178, "kiymik");        // sag kapiyi oyuncu acar
 }
 
 // kapi menteseden odanin icine duz acilir; yalniz kirilma sesi (efekt yok)
@@ -762,7 +762,7 @@ kapi_kir(aci, efekt)
 	self.kirildi = true;
 	self playsound("eldaba_doorbreak");
 	self connectpaths();                        // kapi esigi yeniden gecilebilir
-	self rotateyaw(aci, 0.9, 0.1, 0.4);         // tam acilir (165), kanat kati kalir
+	self rotateyaw(aci, 0.9, 0.1, 0.4);         // tam acilir (178): duvar yuzune yaslanir
 }
 
 // sag (dogu) oda: oyuncu F ile kirar
@@ -775,7 +775,7 @@ sag_kapi_oyuncu()
 	t sethintstring(&"METEL_PLATFORM_KAPI_KIR");
 	t waittill("trigger");
 	t delete();
-	level.kapi_dogu kapi_kir(-165, "kiymik");
+	level.kapi_dogu kapi_kir(-178, "kiymik");
 }
 
 // sol (bati) oda: oyuncu merdivenin son basamagina gelince arkadaki Alman
@@ -813,7 +813,7 @@ sol_kapi_pusu()
 		alman[alman.size] = g;
 	}
 	wait 1;
-	level.kapi_bati kapi_kir(165, "toz");
+	level.kapi_bati kapi_kir(178, "toz");
 	wait 0.9;                                   // kanat tamamen acilsin
 	for (i = 0; i < alman.size; i++)
 	{
@@ -1764,14 +1764,16 @@ kapi_turu()
 	wait 3;
 	kapi_bak(1, (-120, 730, 288), (5, 180, 0));   // bati kapi kapali (holden)
 	kapi_bak(2, (-180, 730, 288), (5, 0, 0));     // dogu kapi kapali (holden)
-	kb thread kapi_kir(165, "toz");
-	kd thread kapi_kir(0 - 165, "kiymik");
+	kb thread kapi_kir(178, "toz");
+	kd thread kapi_kir(0 - 178, "kiymik");
 	wait 1.5;
 	kapi_bak(3, (-120, 730, 288), (5, 180, 0));   // bati kapi acik
 	kapi_bak(4, (-180, 730, 288), (5, 0, 0));     // dogu kapi acik
 	kapi_bak(5, (-560, 640, 288), (5, 25, 0));    // bati oda icinden acik kanat
 	kapi_bak(6, (198, -2340, 200), (3, 218, 0));  // baslangictan yol (gokyuzu)
 	kapi_bak(7, (90, -2620, 210), (4, 211, 0));
+	kapi_bak(8, (-150, 470, 700), (6, 197, 0));   // bati Alman vadisi
+	kapi_bak(9, (-150, 470, 700), (6, 352, 0));   // dogu Alman vadisi
 	setcvar("kr_adim", "bitti");
 }
 
