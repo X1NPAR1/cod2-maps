@@ -1,0 +1,35 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "metel"
+
+REFERENCE           OBJ_B
+LANG_ENGLISH        "B mevzisi: Bati tepesindeki havan ekibini yok et."
+
+REFERENCE           OBJ_C
+LANG_ENGLISH        "C mevzisi: Dogu sirtindaki havan ekibini yok et."
+
+REFERENCE           OBJ_A
+LANG_ENGLISH        "A noktasi: Alman karakolunu ele gecir."
+
+REFERENCE           OBJ_SAVUN
+LANG_ENGLISH        "Karakolu Alman karsi saldirisina karsi savun."
+
+REFERENCE           OBJ_TOPLAN
+LANG_ENGLISH        "Avluda Tegmen Leonov'un yanina git."
+
+REFERENCE           BITTI
+LANG_ENGLISH        "Metel Harekati tamamlandi."
+
+REFERENCE           INTRO_TITLE
+LANG_ENGLISH        ""Operatsiya Metel""
+
+REFERENCE           INTRO_PLACE
+LANG_ENGLISH        "Kotelnikovo Yakinlari, Don Cephesi, S.S.C.B."
+
+REFERENCE           INTRO_DATE
+LANG_ENGLISH        "8 Ocak 1943"
+
+REFERENCE           INTRO_INFO
+LANG_ENGLISH        "3. Muhafiz Ordusu, Saat 06:15"
+
+ENDMARKER

@@ -1,0 +1,35 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "krasnoye"
+
+REFERENCE           OBJ_KOY
+LANG_ENGLISH        "Krasnoye köyünü Almanlardan temizle."
+
+REFERENCE           OBJ_SAVUNMA
+LANG_ENGLISH        "Köyün güneyindeki savunma hattina geç."
+
+REFERENCE           OBJ_PUSKURT
+LANG_ENGLISH        "Alman karsi saldirisini püskürt."
+
+REFERENCE           OBJ_BOMBA
+LANG_ENGLISH        "Ambardaki yapiskan bombalari al."
+
+REFERENCE           OBJ_TANK
+LANG_ENGLISH        "Panzer II tankini yapiskan bombayla imha et."
+
+REFERENCE           BITTI
+LANG_ENGLISH        "Krasnoye savunuldu. Görev tamamlandi."
+
+REFERENCE           INTRO_TITLE
+LANG_ENGLISH        ""Krasnoye Kolhozu""
+
+REFERENCE           INTRO_PLACE
+LANG_ENGLISH        "Stalingrad Cephesi, S.S.C.B."
+
+REFERENCE           INTRO_DATE
+LANG_ENGLISH        "14 Aralik 1942"
+
+REFERENCE           INTRO_INFO
+LANG_ENGLISH        "Kalaç Yakinlari, Saat 07:40"
+
+ENDMARKER
