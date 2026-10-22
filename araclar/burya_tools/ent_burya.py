@@ -279,21 +279,27 @@ def yerlestir(G):
         else:
             zd = zz(x + dx * dis, y + dy * dis)
         ent('node_pathnode', origin=(x + dx * dis, y + dy * dis, round(zd, 1)))
-    # kuleler: platform + merdiven rampasi
-    for (cx, cy, zp, yon, rx_ust, rx_alt) in G.KULE:
-        for (dx, dy) in ((-30, -30), (30, -30), (-30, 30), (30, 30)):
-            ent('node_pathnode', origin=(cx + dx, cy + dy, zp + 8))
-        # korkuluk gecidinin iki yani: platform <-> rampa ustu (olculdu: sol kulede platform adaydi)
-        ent('node_pathnode', origin=(cx + yon * 50, cy, zp + 8))
-        xg = rx_ust + yon * 30
-        ent('node_pathnode', origin=(round(xg), cy, round(ZK + 1 + (zp - ZK - 1) * (rx_alt - xg) / float(rx_alt - rx_ust) + 12, 1)))
-        n = 5
-        for k in range(1, n):
-            x = rx_ust + (rx_alt - rx_ust) * k / float(n)
-            zr = ZK + 1 + (zp - ZK - 1) * (rx_alt - x) / float(rx_alt - rx_ust)
-            ent('node_pathnode', origin=(round(x), cy, round(zr + 12, 1)))
-        xb = rx_alt + yon * 60
-        ent('node_pathnode', origin=(round(xb), cy, zz(xb, cy)))
+    # kuleler: platform + el merdiveni (stok tankhunt kalibi: begin altta merdivene
+    # donuk 'ladder_up' -> end platformda; inis icin ust begin 'ladder_down')
+    for (cx, cy, zp, yon, xo) in G.KULE:
+        for dy in (-28, 32):                      # olculdu: merdiven dugumleriyle cakisma (overlap) AI'yi durduruyordu
+            ent('node_pathnode', origin=(cx - yon * 40, cy + dy, zp + 8))
+        yuz = 180 if yon > 0 else 0              # merdivene bakis
+        alt_x = xo + yon * 34
+        ust_x = cx + yon * 22
+        n = len(say)
+        H.ent('node_negotiation_begin', origin=(round(alt_x), cy, zz(alt_x, cy)), angles=(0, yuz, 0),
+              animscript='ladder_up', targetname='kule_cik_%d' % cx, target='kule_ust_%d' % cx)
+        H.ent('node_negotiation_end', origin=(round(ust_x), cy, zp + 8), angles=(0, yuz, 0), targetname='kule_ust_%d' % cx)
+        H.ent('node_negotiation_begin', origin=(round(ust_x + yon * 46), cy, zp + 8), angles=(0, yuz, 0),
+              animscript='ladder_down', targetname='kule_in_%d' % cx, target='kule_alt_%d' % cx)
+        H.ent('node_negotiation_end', origin=(round(alt_x + yon * 50), cy, zz(alt_x + yon * 50, cy)), angles=(0, (yuz + 180) % 360, 0),
+              targetname='kule_alt_%d' % cx)
+        say['merdiven'] = say.get('merdiven', 0) + 1
+        bx_ = alt_x + yon * 110
+        ent('node_pathnode', origin=(round(bx_), cy, zz(bx_, cy)))
+        ent('script_origin', targetname='kule_dip', script_noteworthy=str(cx), origin=(round(alt_x), cy, zz(alt_x, cy, 0)))
+        ent('script_origin', targetname='kule_ust', script_noteworthy=str(cx), origin=(cx, cy - 10, zp + 4))
 
     # =====================================================================
     # 3. ZINCIR (oyuncu her zaman bir zincirde olmali -- olculen kural)
@@ -357,8 +363,8 @@ def yerlestir(G):
     dB = G.KOPRU_M                          # kopru ortasinin yol mesafesi
     ARA = G.KONVOY_ARA
     YOLCULUK = min(6600, dB - 80)           # en fazla 15 mph x 25 sn
-    HIZ = max(8, int(round(YOLCULUK / 25.0 / 17.6)))   # mph (1 mph = 17.6 birim/sn)
-    durus = {'konvoy3': dB, 'konvoy2': dB + ARA, 'konvoy1': dB + 2 * ARA}
+    HIZ = max(8, int(round(YOLCULUK / 25.0 / 17.6))) - 5   # mph; kullanici testi: 5 mph yavas
+    durus = {'konvoy3': dB, 'konvoy2': dB + ARA + 260, 'konvoy1': dB + 2 * ARA + 260}   # kullanici: bizim arac patlayan kamyondan uzak
     for k, ad in enumerate(('konvoy1', 'konvoy2', 'konvoy3')):
         m1 = durus[ad]
         nokta = G.hat_kes(KH, m1 - YOLCULUK, m1)
@@ -374,7 +380,7 @@ def yerlestir(G):
         elif ad == 'konvoy2':
             yerler = [(0, 'actor_ally_rus_reg_ppsh', {}),
                       (1, 'actor_ally_rus_commissar_ppsh', {'script_noteworthy': 'leonov', 'script_friendname': 'Lt. Leonov'})]
-            yerler += [(2 + i, SOV[i], {}) for i in range(6)]
+            yerler += [(2 + i, SOV[i], {}) for i in range(4)]
         else:
             yerler = [(0, 'actor_ally_rus_reg_ppsh', {})] + [(1 + i, SOV[i + 2], {}) for i in range(3)]
         arac(ad, k + 1, nokta, HIZ, k + 1, yerler)
@@ -382,10 +388,9 @@ def yerlestir(G):
     print('konvoy: kopru mesafesi %d, yolculuk %d, hiz %d mph' % (dB, YOLCULUK, HIZ))
     TH = G.YOL_HAT['takviye'][0]
     LT = G.hat_uzunluk(TH)
-    for k, ad in enumerate(('takviye1', 'takviye2')):
-        nokta = G.hat_kes(TH, 0, LT - k * 340)
-        yerler = [(i, SOV[i % len(SOV)], {}) for i in range(7)]          # sofor + 6
-        arac(ad, 4 + k, nokta, 20, 4 + k, yerler, yavas=True)
+    nokta = G.hat_kes(TH, 0, LT - 340)                               # kullanici: 2. durak
+    yerler = [(i, SOV[i % len(SOV)], {}) for i in range(9)]           # Opel Blitz'in 9 yeri (stok _truck)
+    arac('takviye1', 4, nokta, 20, 4, yerler, yavas=True)
 
     # =====================================================================
     # 5. ALMANLAR
@@ -426,24 +431,75 @@ def yerlestir(G):
     grup('pusu', 'pusu', PUSU_N, 10)
     # KAMP DIS (9): kapi onu siperleri ve kapi ici
     KD_N = [(x, y, 0, 270) for (x, y) in ((2200, 1800), (2300, 1860), (2400, 1800), (2250, 1960), (2350, 1960),
-                                           (2150, 1900), (2450, 1900), (2300, 1760), (2200, 2010))]
-    grup('kamp_dis', 'kamp_dis', KD_N, 9)
+                                           (2150, 1900), (2450, 1900), (2300, 1760), (2200, 2010), (2500, 1760))]
+    grup('kamp_dis', 'kamp_dis', KD_N, 10)
     # KAMP IC (10)
-    grup('kamp_ic', 'kamp_ic', SIPER['kamp_ic'], 10)
+    KI_N = list(SIPER['kamp_ic'][:9])
+    KI_N += [(x, y, 0, 0, 'baraka_a') for (x, y) in ((1950, 2190), (2100, 2270), (2280, 2140))]
+    KI_N += [(x, y, 0, 0, 'depo_a') for (x, y) in ((3300, 2850), (3430, 2840), (3240, 2830))]
+    grup('kamp_ic', 'kamp_ic', KI_N, 15)
     # MERKEZ (5): merkez binanin pencere arkalari
-    M_N = [(q[0], q[1], q[2], q[3], 'merkez0') for q in SIPER['merkez']][:5]
-    grup('kamp_merkez', 'kamp_merkez', M_N, 5)
-    # DALGA (8 spawner, iki partide yeniden kullanilir): depolarin kuzeyi (gorus disi)
-    for i in range(8):
-        sp(TUFEK[i % len(TUFEK)], 3700 + (i % 4) * 110, 2880 + (i // 4) * 70, None, 270, targetname='dalga', spawnflags=1, count=1)
+    M_N = [(q[0], q[1], q[2], q[3], 'merkez0') for q in SIPER['merkez']]
+    grup('kamp_merkez', 'kamp_merkez', M_N[:7], 7)
+    # YEDEK (takviye gelene kadar her olen Alman 2-5 sn sonra yerine): kampin
+    # kuzeyi, binalarin arkasi (kapidan gorulmez; GSC ayrica gorus denetler)
+    for i, (x, y) in enumerate(((2700, 2700), (3000, 2700), (3300, 2680), (2050, 2450), (2250, 2470),
+                                (4130, 2250), (4130, 1900), (3700, 2900))):
+        sp(TUFEK[i % len(TUFEK)], x, y, None, 270, targetname='kamp_yedek', spawnflags=1, count=1)
+    # BINA ICI YEDEK: bir Sovyet kampa girince dogus yalniz binalarin icinde
+    for i, q in enumerate(M_N[7:11] + [(2000, 2290, 0, 0, 'baraka_a'), (2250, 2290, 0, 0, 'baraka_a'),
+                                       (3520, 2860, 0, 0, 'depo_a'), (3200, 2880, 0, 0, 'depo_a')]):
+        sp(TUFEK[i % len(TUFEK)], q[0], q[1], q[4], 270, targetname='bina_yedek', script_noteworthy=q[4], spawnflags=1, count=1)
+    # KARSI SALDIRI (50): kampi cevreleyen orman, her yonden (sinir icinde, egim uygun)
+    KARSI = []
+    for (x, y) in ((1200, 1700), (1150, 2200), (1200, 2700), (1300, 3300), (1900, 3550), (2600, 3600),
+                   (3300, 3600), (4000, 3550), (4700, 3300), (4800, 2700), (4800, 2100), (4750, 1500),
+                   (4400, 1000), (3600, 900), (1100, 1200), (2900, 3450), (4600, 2400), (1000, 2450)):
+        p_ = yer_bul(x, y, 28, None, 260)
+        if p_ and egim_ok(*p_, adim=40):
+            KARSI.append(p_)
+    assert len(KARSI) >= 10, ('karsi saldiri noktasi az', len(KARSI))
+    for i, (x, y) in enumerate(KARSI):
+        sp(TUFEK[i % len(TUFEK)], x, y, None, 0, targetname='karsi', spawnflags=1, count=1)
+    print('karsi saldiri dogus noktasi:', len(KARSI), KARSI)
     # MG nisancilari (2): kule platformlarinda; taret misc_turret 'kule_mg'
-    for (cx, cy, zp, _y, _a, _b) in G.KULE:
+    for (cx, cy, zp, _y, _x) in G.KULE:
         H.ent('misc_turret', model='xmodel/weapon_mg42', weaponinfo='mg42_bipod_stand', targetname='kule_mg',
-              origin=(cx, cy - 62, zp + 34), angles=(0, 270, 0))
+              origin=(cx, cy - 62, zp + 34), angles=(0, 270, 0), script_noteworthy=str(cx))
         H.ent('actor_axis_snow_wehr_reg_kar98k', origin=(cx, cy - 10, zp + 4), angles=(0, 270, 0),
               targetname='kamp_mg', script_aigroup='kamp_dis', spawnflags=1, count=1)
         say['mg'] = say.get('mg', 0) + 1
 
+    # EV SIPERLERI (karsi saldiri): pencere ve kapi arkalari -- script_origin 'ev_siper'
+    EVS = [('baraka_a', 1950, 2070 + 38, 270), ('baraka_a', 2150, 2070 + 38, 270), ('baraka_a', 2280, 2070 + 38, 270),
+           ('baraka_a', 1820 + 38, 2210, 180), ('baraka_a', 2380 - 50, 2160, 0), ('baraka_a', 2060, 2350 - 50, 90),
+           ('baraka_a', 2240, 2300, 90),
+           ('depo_a', 3220, 2770 + 38, 270), ('depo_a', 3530, 2770 + 38, 270), ('depo_a', 3330, 2770 + 40, 270)]
+    # merkez bina zemin kat: her pencerenin hemen arkasi (kullanici: siper pencere onu)
+    EVS += [('merkez0', x, BY0 + 16 + 22, 270) for x in (2650, 2800, 3200, 3350)]
+    EVS += [('merkez0', x, BY1 - 16 - 22, 90) for x in (2650, 3100, 3350)]
+    EVS += [('merkez0', BX0 + 16 + 22, y, 180) for y in (2150, 2450)]
+    EVS += [('merkez0', BX1 - 16 - 22, y, 0) for y in (2120, 2480)]
+    for i, (oda, x, y, yaw) in enumerate(EVS):
+        q = yer_bul(x, y, 16, oda, 160 if oda == 'baraka_a' else 90)
+        if q:
+            ent('script_origin', targetname='ev_siper', script_noteworthy=oda, origin=(q[0], q[1], oda_z(oda) + 4), angles=(0, yaw, 0))
+            if oda == 'baraka_a':                 # karsi saldirida bir kez dogan 7 Sovyet
+                kv = dict(origin=(q[0], q[1], oda_z(oda) + 4), angles=(0, yaw, 0), targetname='ev_sovyet', spawnflags=1, count=1)
+                if i == 4:
+                    kv['script_noteworthy'] = 'kapi'
+                H.ent(SOV[i % len(SOV)], **kv)
+                say['ev_sovyet'] = say.get('ev_sovyet', 0) + 1
+    # merkez bina UST KAT pencere arkalari (ust katta yol agi yok: GSC gorulmeden yerlestirir)
+    UZ = G.BZU + 4
+    UST = [(x, BY0 + 16 + 24) for x in (2650, 2800, 3200, 3350)] + [(x, BY1 - 16 - 24) for x in (2650, 3100, 3350)] + \
+          [(BX0 + 16 + 24, y) for y in (2150, 2450)] + [(BX1 - 16 - 24, y) for y in (2120, 2300)]
+    for (x, y) in UST:
+        ent('script_origin', targetname='ust_siper', origin=(x, y, UZ))
+    # merkez bina ust kat MG42 (guney orta pencere, denizlik BZU+34)
+    H.ent('misc_turret', model='xmodel/weapon_mg42', weaponinfo='mg42_bipod_stand', targetname='bina_mg',
+          origin=(3000, BY0 + 10, G.BZU + 34), angles=(0, 270, 0))
+    ent('script_origin', targetname='bina_mg_yer', origin=(3000, BY0 + 42, G.BZU + 4))
     # =====================================================================
     # 6. BETIK NOKTALARI
     # =====================================================================

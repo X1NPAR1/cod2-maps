@@ -10,7 +10,7 @@ Get-Process CoD2SP_s -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep 2
 Remove-Item "$r\__CoD2SP_s" -Force -ErrorAction SilentlyContinue
 Remove-Item "$r\main\console.log" -ErrorAction SilentlyContinue
-$arg = '+set r_fullscreen 0 +set r_mode 1280x720 +set r_aaSamples 1 +set r_anisotropy 16 +set r_picmip 0 +set r_picmip_bump 0 +set r_picmip_spec 0 +set r_picmip_manual 1 +set r_glow 1 +set developer 1 +set logfile 2 +set thereisacow 1337 +set com_introplayed 1 +set snd_volume 0 +set mus_volume 0 +devmap burya'
+$arg = '+set r_fullscreen 0 +set r_mode 1280x720 +set r_aaSamples 1 +set r_anisotropy 16 +set r_picmip 0 +set r_picmip_bump 0 +set r_picmip_spec 0 +set r_picmip_manual 1 +set r_glow 1 +set developer 1 +set logfile 2 +set snd_volume 0.7 +set r_displayRefresh 165 +set vid_xpos 0 +set vid_ypos 0 +set thereisacow 1337 +set com_introplayed 1 +devmap burya'
 if (-not ([System.Management.Automation.PSTypeName]'KrPencere').Type) {
 Add-Type @"
 using System; using System.Runtime.InteropServices;
@@ -28,7 +28,6 @@ function Ikinci-Ekran($proc) {
     }
 }
 $p = Start-Process -FilePath "$r\CoD2SP_s.exe" -WorkingDirectory $r -ArgumentList $arg -PassThru
-Ikinci-Ekran $p
 $log = "$r\main\console.log"; $t = 0; $durum = "ZAMAN ASIMI"
 while ($t -lt 180) {
     Start-Sleep 2; $t += 2

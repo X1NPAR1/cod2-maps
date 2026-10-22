@@ -1,13 +1,14 @@
 # Call of Duty 2 — Sovyet Tek Oyunculu Haritaları
 
-İki bölümlük, birbirini izleyen özel tek oyunculu harita.
+Üç bölümlük, birbirini izleyen özel tek oyunculu harita.
 
 | Sıra | Harita | Bölüm | Tarih |
 |---|---|---|---|
 | 1 | `krasnoye` | Krasnoye Kolhozu — köyü temizle ve savun | 14 Aralık 1942 |
 | 2 | `metel` | Operatsiya Metel — karakol ve iki havan mevzisi | 8 Ocak 1943 |
+| 3 | `burya` | Operation Snowstorm (Kar Fırtınası) — konvoy pususu, Alman kampı, üç patlayıcı | 2 Şubat 1943 |
 
-`krasnoye` bitince oyun otomatik olarak `metel` bölümünü yükler.
+Bölümler sırayla yüklenir: `krasnoye` → `metel` → `burya` → jenerik.
 
 ## Kurulum
 
@@ -25,6 +26,13 @@ Oyunun 1.3 yamasıyla test edildi. Stok iwd dosyaları dışında başka bir şe
 2. Sonra B ve C havan mevzileri, istenen sırayla temizlenir.
 3. Ardından karakol 50 piyade, bir kamyon ve iki yarı paletliye karşı savunulur.
 4. En sonda ekip avluda Leonov'un etrafında toplanır.
+
+**Burya:**
+1. Oyuncu Leonov'un kamyonunun kasasında konvoyla ilerler; arkadaki kamyon köprüde mayına basar, geri dönüş kapanır, 10 Alman pusuya düşürür.
+2. Kamp girişindeki 10 Alman ve iki kuledeki MG42'ler, takviye kamyonu gelene kadar görünmeyen yerlerden yeniden doğar; takviye (9 kişi) gelince ya da oyuncu kampa girince herkes içeri hücum eder.
+3. Kamp içi ve binalar temizlenir; ardından ormanın her yönünden 50 Almanlık karşı saldırı gelir. Sovyetler karakol binasının pencerelerine, iki kişi el merdiveniyle kulelere, biri üst kat MG'sine geçer; bomba evinde 7 Sovyet savunur.
+4. Üç patlayıcı kurulur, 20 sn'lik sayaç başlar; Sovyetler kamptan çekilip çömelerek izler, oyuncu çıkınca binalarda Almanlar belirir.
+5. Ardışık patlamalarda binalar çöker, kuleler devrilir, kamp kamyonu yanar; Leonov'un sözleriyle bölüm biter.
 
 ## Kaynak ve araçlar
 

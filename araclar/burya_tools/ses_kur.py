@@ -16,18 +16,19 @@ ANA = r'F:\Activision\Call of Duty 2\main'
 HAM = r'F:\Activision\cod2_analiz\ham'
 HARITA = 'burya'
 
-LEONOV = {   # replik -> stok alias (Tegmen Volsky, Turkce altyazili)
-    'giris':     'tankhunt_volsky_keepeyesopen',              # Gozlerinizi acik tutun
+LEONOV = {   # replik -> stok alias (Turkce altyazili; null.wav OLMAZ -- olculdu: sessiz kaliyordu)
+    'giris':     'downtownassault_volsky_movein',             # Hadi yurttaslar! Bize kesin sonuc gerek!
     'pusu':      'downtownassault_volsky_takecover',          # Siper alin!
     'ilerle':    'downtownsniper_volsky_letsmoveon',          # Ilerleyelim
     'kamp':      'downtownassault_volsky_germanhardpoint',    # Alman mevzisi
-    'mg':        'tankhunt_volsky_eliminatemg42s',            # MG42'leri yok edin
+    'mg':        'downtownsniper_volsky_mg42frontlinesloud',  # MG42 kullanimina gectiler
     'savun':     'cityhall_vsk_wemusthold',                   # Dayanmaliyiz
-    'saldiri':   'downtownsniper_volsky_heretheycome',        # Geliyorlar!
-    'temizle':   'tankhunt_volsky_clearoutposition',          # Mevziyi temizleyin
+    'saldiri':   'downtownsniper_volsky_preparecounter',      # Karsi atagini puskurtmeliyiz! Savunma pozisyonuna!
+    'geliyorlar': 'downtownsniper_volsky_startingattackloud', # Saldiri baslatiyorlar!
+    'temizle':   'downtownassault_volsky_clearapt1',          # Bina temizlenmeli! Kattan kata!
+    'geri':      'downtownsniper_volsky_enemyretreating',     # Dusman geri cekiliyor!
     'kamp_bizde': 'downtownassault_volsky_backinsoviethands', # Yeniden Sovyet elinde
-    'bomba':     'downtownassault_volsky_finalobjective',     # Son hedef
-    'iyi_is':    'downtownassault_volsky_welldone',           # Aferin
+    'bomba':     'demolition_rs1_helpusout',                  # bomba al, guzel bir surpriz ayarla
     'final1':    'cityhall_vsk_takenit',                      # Onu aldik! Tebrikler
     'final2':    'cityhall_vsk_tomorrow',                     # Yarin ...
 }
@@ -56,12 +57,12 @@ GOREV = [
     ('OBJ_KONVOY', "Konvoyla birlikte ilerle ve Alman karakoluna ulaş."),
     ('OBJ_PUSU', "Siper alın! Alman saldırısını püskürt."),
     ('OBJ_KAMP', "Alman kampına ilerle."),
-    ('OBJ_GIRIS', "Kamp girişini ele geçir: MG42 kulelerini sustur."),
-    ('OBJ_SAVUN', "Sovyet takviyeleri ulaşana kadar kampın girişini savun."),
-    ('OBJ_ELE', "Alman kampını ele geçir."),
+    ('OBJ_GIRIS', "Kamp girişindeki Almanları baskı altında tut: Sovyet takviyeleri gelene kadar dayan."),
+    ('OBJ_SAVUN', "Alman karşı saldırısını püskürt! Kampı savun."),
+    ('OBJ_ELE', "Takviyelerle birlikte kampa bastır: binaları ve karakolu temizle."),
     ('OBJ_BEKLE', "Kamp kontrol altında. Leonov'un emirlerini bekle."),
     ('OBJ_BOMBA', "Kampa üç patlayıcı yerleştir: merkez bina, depo, baraka."),
-    ('OBJ_KAC', "Hemen dışarı çık! Patlamadan önce güvenli mesafeye ulaş!"),
+    ('OBJ_KAC', "Patlamadan önce kamptan uzaklaş!"),
     ('OBJ_LEONOV', "Leonov'un yanına git."),
     ('MSG_TAKVIYE', "Sovyet takviyeleri geldi!"),
     ('BITTI', "Kar Fırtınası Harekatı tamamlandı."),
@@ -167,6 +168,8 @@ def main():
     sorun = []
     for s_ in satir[1:]:
         r = dict(zip(hdr, next(csv.reader([s_]))))
+        if r['name'].lower().startswith(HARITA + '_leonov_') and (r['file'].lower().endswith('null.wav') or not r.get('subtitle')):
+            sorun.append('LEONOV SESSIZ/ALTYAZISIZ: %s %s' % (r['name'], r['file']))
         if r['file'] and ('sound/' + r['file']).lower() not in var:
             sorun.append('DOSYA YOK: %s %s' % (r['name'], r['file']))
         if r.get('subtitle') and r['subtitle'].upper() not in alt:

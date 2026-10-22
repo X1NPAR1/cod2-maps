@@ -31,6 +31,11 @@ precacheFX()
 	level._effect["bina_ates"]	= loadfx("fx/fire/building_fire_med.efx");
 	level._effect["bina_duman"]	= loadfx("fx/smoke/thin_black_smoke_M.efx");
 	level._effect["bina_buyuk"]	= loadfx("fx/explosions/ammo_supply_exp.efx");
+	// kule devrilmesi: tahta kiriklari ve toz
+	level._effect["duman_bombasi"]	= loadfx("fx/props/german_smoke_grenade.efx");
+	level._effect["kule_tahta"]	= loadfx("fx/explosions/grenadeExp_wood.efx");
+	level._effect["kule_kirik"]	= loadfx("fx/impacts/large_woodhit.efx");
+	level._effect["kule_toz"]	= loadfx("fx/dust/toujane_tunnel_collapse.efx");
 }
 
 karYagisi()

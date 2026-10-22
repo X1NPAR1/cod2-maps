@@ -12,13 +12,13 @@ REFERENCE           OBJ_KAMP
 LANG_ENGLISH        "Alman kampina ilerle."
 
 REFERENCE           OBJ_GIRIS
-LANG_ENGLISH        "Kamp girisini ele geçir: MG42 kulelerini sustur."
+LANG_ENGLISH        "Kamp girisindeki Almanlari baski altinda tut: Sovyet takviyeleri gelene kadar dayan."
 
 REFERENCE           OBJ_SAVUN
-LANG_ENGLISH        "Sovyet takviyeleri ulasana kadar kampin girisini savun."
+LANG_ENGLISH        "Alman karsi saldirisini püskürt! Kampi savun."
 
 REFERENCE           OBJ_ELE
-LANG_ENGLISH        "Alman kampini ele geçir."
+LANG_ENGLISH        "Takviyelerle birlikte kampa bastir: binalari ve karakolu temizle."
 
 REFERENCE           OBJ_BEKLE
 LANG_ENGLISH        "Kamp kontrol altinda. Leonov'un emirlerini bekle."
@@ -27,7 +27,7 @@ REFERENCE           OBJ_BOMBA
 LANG_ENGLISH        "Kampa üç patlayici yerlestir: merkez bina, depo, baraka."
 
 REFERENCE           OBJ_KAC
-LANG_ENGLISH        "Hemen disari çik! Patlamadan önce güvenli mesafeye ulas!"
+LANG_ENGLISH        "Patlamadan önce kamptan uzaklas!"
 
 REFERENCE           OBJ_LEONOV
 LANG_ENGLISH        "Leonov'un yanina git."

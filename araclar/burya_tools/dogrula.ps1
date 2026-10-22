@@ -26,8 +26,7 @@ function Ikinci-Ekran($proc) {
     }
 }
 $p = Start-Process -FilePath "$r\CoD2SP_s.exe" -WorkingDirectory $r -PassThru -ArgumentList `
-  '+set r_fullscreen 0 +set r_mode 1280x720 +set developer 1 +set logfile 2 +set thereisacow 1337 +set com_introplayed 1 +set g_connectpaths 2 +set snd_volume 0 +set mus_volume 0 +devmap burya'
-Ikinci-Ekran $p
+  '+set r_fullscreen 0 +set r_mode 1280x720 +set developer 1 +set logfile 2 +set snd_volume 0.7 +set r_displayRefresh 165 +set vid_xpos 0 +set vid_ypos 0 +set thereisacow 1337 +set com_introplayed 1 +set g_connectpaths 2 +devmap burya'
 if (-not ([System.Management.Automation.PSTypeName]'KrDiyalog').Type) {
 Add-Type @"
 using System; using System.Text; using System.Collections.Generic; using System.Runtime.InteropServices;

@@ -475,7 +475,7 @@ KOPRU_Z = [kopru(yk) for yk in KOPRU_Y]
 #   genislik 52; icinde '+' ahsap kasa (3 birim citalar, detail)
 # =========================================================================
 K = 16
-KAPI_G, KAPI_H = 52, 76
+KAPI_G, KAPI_H = 64, 88                         # kullanici testi: 52x76 dar geldi (egilmeden gecilmiyordu)
 PEN_G, PEN_ALT, PEN_UST = 52, 46, 88
 
 def delikli_duvar(eksen, a, b, c0, c1, z0, z1, delikler, m, hedef=None):
@@ -483,13 +483,19 @@ def delikli_duvar(eksen, a, b, c0, c1, z0, z1, delikler, m, hedef=None):
     def bx(p0, p1, q0, q1):
         if eksen == 'x': kutu6(p0, c0, q0, p1, c1, q1, m, hedef=hedef)
         else: kutu6(c0, p0, q0, c1, p1, q1, m, hedef=hedef)
+    def bx2(p0, p1, q0, q1):
+        if p1 - p0 > 0.01 and q1 - q0 > 0.01:
+            bx(p0, p1, q0, q1)
     p = a
     for (da, db, za, zb) in sorted(delikler):
-        bx(p, da, z0, z1)
-        bx(da, db, z0, za)
-        bx(da, db, zb, z1)
+        za, zb = max(za, z0), min(zb, z1)
+        if zb <= za:
+            continue                              # delik bu z bandinda degil
+        bx2(p, da, z0, z1)
+        bx2(da, db, z0, za)
+        bx2(da, db, zb, z1)
         p = db
-    bx(p, b, z0, z1)
+    bx2(p, b, z0, z1)
 
 def pencere_kasa(eksen, c0, c1, da, db, za, zb, hedef=None):
     """'+' bicimli ahsap kasa: ortada dikey + yatay cita, duvar kalinliginin ortasinda."""
@@ -560,7 +566,7 @@ def kapi_rampasi(yon, m, x0, y0, x1, y1, zt, boy=72):
     elif yon == 'b': H.kama(x0 - boy, m - g, x0, m + g, za - 30, za, zt, '+x', TEMEL, TEMEL, alt=CAULK)
     else: H.kama(x1, m - g, x1 + boy, m + g, za - 30, za, zt, '-x', TEMEL, TEMEL, alt=CAULK)
 
-def tahta_kapak(yon, eks, c0, c1, m, z0):
+def tahta_kapak(yon, eks, c0, c1, m, z0, hedef=None):
     """kapali binanin penceresi: delik yok; dis yuzde cakili tahta kapak + cerceve."""
     a, b, za, zb = m - PEN_G / 2.0 - 4, m + PEN_G / 2.0 + 4, z0 + PEN_ALT - 4, z0 + PEN_UST + 4
     dis = c0 if yon in ('g', 'b') else c1
@@ -568,14 +574,14 @@ def tahta_kapak(yon, eks, c0, c1, m, z0):
     lo, hi = (dis - 3, dis) if s_ < 0 else (dis, dis + 3)
     lo2, hi2 = (dis - 5, dis - 3) if s_ < 0 else (dis + 3, dis + 5)
     if eks == 'x':
-        kutu6(a, lo, za, b, hi, zb, {'*': TRIM, '-y': TAHTA3, '+y': TAHTA3}, detay=True)
-        kutu6(a, lo2, za + 18, b, hi2, za + 26, {'*': YANIK}, detay=True)
+        kutu6(a, lo, za, b, hi, zb, {'*': TRIM, '-y': TAHTA3, '+y': TAHTA3}, detay=True, hedef=hedef)
+        kutu6(a, lo2, za + 18, b, hi2, za + 26, {'*': YANIK}, detay=True, hedef=hedef)
     else:
-        kutu6(lo, a, za, hi, b, zb, {'*': TRIM, '-x': TAHTA3, '+x': TAHTA3}, detay=True)
-        kutu6(lo2, a, za + 18, hi2, b, za + 26, {'*': YANIK}, detay=True)
+        kutu6(lo, a, za, hi, b, zb, {'*': TRIM, '-x': TAHTA3, '+x': TAHTA3}, detay=True, hedef=hedef)
+        kutu6(lo2, a, za + 18, hi2, b, za + 26, {'*': YANIK}, detay=True, hedef=hedef)
 
 def ev(ad, x0, y0, x1, y1, zt, h, acikliklar, dis_m, ic_m, cati_m, girilir=True, hedef=None,
-       cati_yon='y', taban=True):
+       cati_yon='y', taban=True, ust=None, kes=40):
     """Tek katli bina. acikliklar: {'g'/'k'/'b'/'d': [('kapi'|'kapali'|'pen', merkez), ...]}
     merkez: duvar boyunca dunya koordinati (x ya da y)."""
     if taban:
@@ -594,17 +600,22 @@ def ev(ad, x0, y0, x1, y1, zt, h, acikliklar, dis_m, ic_m, cati_m, girilir=True,
                 if tur == 'kapi':
                     kapi_rampasi(yon, m, x0, y0, x1, y1, zt)
                 if tur == 'kapali':
-                    kapi_kanati(eks, c0, c1, m - KAPI_G / 2.0, m + KAPI_G / 2.0, z0, hedef=hedef)
+                    kapi_kanati(eks, c0, c1, m - KAPI_G / 2.0, m + KAPI_G / 2.0, z0, hedef=hedef if ust is None else ust)
             elif girilir:
                 dl.append((m - PEN_G / 2.0, m + PEN_G / 2.0, z0 + PEN_ALT, z0 + PEN_UST))
-                pencere_kasa(eks, c0, c1, m - PEN_G / 2.0, m + PEN_G / 2.0, z0 + PEN_ALT, z0 + PEN_UST, hedef=hedef)
+                pencere_kasa(eks, c0, c1, m - PEN_G / 2.0, m + PEN_G / 2.0, z0 + PEN_ALT, z0 + PEN_UST, hedef=hedef if ust is None else ust)
             else:
-                tahta_kapak(yon, eks, c0, c1, m, z0)
-        delikli_duvar(eks, a, b, c0, c1, z0, z1, dl, M(ic, dis), hedef=hedef)
+                tahta_kapak(yon, eks, c0, c1, m, z0, hedef=None if ust is None else ust)
+        if ust is None:
+            delikli_duvar(eks, a, b, c0, c1, z0, z1, dl, M(ic, dis), hedef=hedef)
+        else:                                     # patlamada alt kirik duvar kalir (yol agi ayni)
+            delikli_duvar(eks, a, b, c0, c1, z0, z0 + kes, dl, M(ic, dis), hedef=hedef)
+            delikli_duvar(eks, a, b, c0, c1, z0 + kes, z1, dl, M(ic, dis), hedef=ust)
         ic_bosluk[yon] = bos
     # tavan + cati
-    kutu6(x0, y0, z1, x1, y1, z1 + 12, {'*': TRIM, '-z': ic_m, '+z': CAULK}, hedef=hedef)
-    cati_ust(x0, y0, x1, y1, z1 + 12, cati_m, yon=cati_yon, hedef=hedef)
+    uh = hedef if ust is None else ust
+    kutu6(x0, y0, z1, x1, y1, z1 + 12, {'*': TRIM, '-z': ic_m, '+z': CAULK}, hedef=uh)
+    cati_ust(x0, y0, x1, y1, z1 + 12, cati_m, yon=cati_yon, hedef=uh)
     if girilir:
         supurgelik('x', y0 + K, +1, x0 + K, x1 - K, zt, ic_bosluk['g'], hedef)
         supurgelik('x', y1 - K, -1, x0 + K, x1 - K, zt, ic_bosluk['k'], hedef)
@@ -614,10 +625,10 @@ def ev(ad, x0, y0, x1, y1, zt, h, acikliklar, dis_m, ic_m, cati_m, girilir=True,
         uzun_x = (x1 - x0) >= (y1 - y0)
         if uzun_x:
             for xx in range(int(x0) + 120, int(x1) - 60, 160):
-                kutu6(xx, y0 + K, z1 - 10, xx + 10, y1 - K, z1, {'*': KIRIS}, detay=True, hedef=hedef)
+                kutu6(xx, y0 + K, z1 - 10, xx + 10, y1 - K, z1, {'*': KIRIS}, detay=True, hedef=uh)
         else:
             for yy in range(int(y0) + 120, int(y1) - 60, 160):
-                kutu6(x0 + K, yy, z1 - 10, x1 - K, yy + 10, z1, {'*': KIRIS}, detay=True, hedef=hedef)
+                kutu6(x0 + K, yy, z1 - 10, x1 - K, yy + 10, z1, {'*': KIRIS}, detay=True, hedef=uh)
     YAPILAR[ad] = (x0, y0, x1, y1, girilir)
 
 # =========================================================================
@@ -658,56 +669,62 @@ for xx in (KAPI_X - 126, KAPI_X + 110):
     KAYALAR.append((xx + 8, ky0, 16))
 kutu6(KAPI_X - 126, ky0 - 10, ZK + 170, KAPI_X + 126, ky0 + 10, ZK + 190, {'*': KIRIS}, detay=True)
 
-KULE = []                    # (x, y, platform z, yon, rampa ust x, rampa alt x)
+KULE = []                    # (x, y, platform z, yon[merdiven tarafi], merdiven dis yuzu x)
+KULE_BM = []
 def kule(cx, cy, yon):
-    """ahsap gozetleme kulesi: 4 ayak, platform (ZK+180), korkuluk, cati.
-    Merdiven cit boyunca (yon -1 bati, +1 dogu): olculdu -- kuzeye uzanan
-    merdiven kapi ici alani binadan ayirip ada yapiyordu. Kulenin alti bos
-    (yalniz ayaklar engel): AI altindan gecer."""
+    """ahsap gozetleme kulesi (brushmodel, origin = taban ortasi -> devrilir).
+    Olculen kusur: ayaklar platform/korkuluk/catiya giriyordu ("demirler ic ice")
+    -> ayaklar yalniz platform altinda; ust direkler ve korkuluklar ayrik."""
     zp = ZK + 180
     w = 80
-    for (dx, dy) in ((-w, -w), (w - 14, -w), (-w, w - 14), (w - 14, w - 14)):
-        kutu6(cx + dx, cy + dy, ZK - 20, cx + dx + 14, cy + dy + 14, zp + 140, {'*': KIRIS})
+    P = 14
+    bm = []
+    for (dx, dy) in ((-w, -w), (w - P, -w), (-w, w - P), (w - P, w - P)):
+        kutu6(cx + dx, cy + dy, ZK - 20, cx + dx + P, cy + dy + P, zp - 12, {'*': KIRIS}, hedef=bm)
         KAYALAR.append((cx + dx + 7, cy + dy + 7, 12))
-    kutu6(cx - w, cy - w, zp - 12, cx + w, cy + w, zp, {'*': TRIM, '+z': TAHTA2})
-    # korkuluk: merdiven tarafinda (x = cx + yon*w) ortada 46'lik gecit
-    kutu6(cx - w, cy - w, zp, cx + w, cy - w + 6, zp + 44, {'*': TAHTA3}, detay=True)
-    kutu6(cx - w, cy + w - 6, zp, cx + w, cy + w, zp + 44, {'*': TAHTA3}, detay=True)
+    # capraz kusaklar: ayaklarin ARASINDA (yuzeyleri ayaklara degiyor, icine girmiyor)
+    for zk_ in (ZK + 128, ZK + 150):           # AI boyunun ustunde (olculdu: ZK+60 dugumleri 'in solid' yapti)
+        kutu6(cx - w + P, cy - w + 3, zk_, cx + w - P, cy - w + 11, zk_ + 10, {'*': KIRIS}, detay=True, hedef=bm)
+        kutu6(cx - w + P, cy + w - 11, zk_, cx + w - P, cy + w - 3, zk_ + 10, {'*': KIRIS}, detay=True, hedef=bm)
+        xa = cx - w + 3 if yon > 0 else cx + w - 11      # merdivensiz yan
+        kutu6(xa, cy - w + P, zk_, xa + 8, cy + w - P, zk_ + 10, {'*': KIRIS}, detay=True, hedef=bm)
+    # platform (ayaklarin ustune oturur, 8 tasar)
+    kutu6(cx - w - 8, cy - w - 8, zp - 12, cx + w + 8, cy + w + 8, zp, {'*': TRIM, '+z': TAHTA2}, hedef=bm)
+    # cati direkleri (koselerde 10x10) ve korkuluk (direkler arasinda)
+    D = 10
+    for (dx, dy) in ((-w - 8, -w - 8), (w - 2, -w - 8), (-w - 8, w - 2), (w - 2, w - 2)):
+        kutu6(cx + dx, cy + dy, zp, cx + dx + D, cy + dy + D, zp + 140, {'*': KIRIS}, detay=True, hedef=bm)
+    a_, b_ = -w + 2, w - 2
+    kutu6(cx + a_, cy - w - 8, zp, cx + b_, cy - w - 2, zp + 44, {'*': TAHTA3}, detay=True, hedef=bm)   # guney
+    kutu6(cx + a_, cy + w + 2, zp, cx + b_, cy + w + 8, zp + 44, {'*': TAHTA3}, detay=True, hedef=bm)   # kuzey
     for sx in (-1, 1):
-        xa, xb = (cx - w, cx - w + 6) if sx < 0 else (cx + w - 6, cx + w)
-        if sx == yon:
-            kutu6(xa, cy - w + 6, zp, xb, cy - 23, zp + 44, {'*': TAHTA3}, detay=True)
-            kutu6(xa, cy + 23, zp, xb, cy + w - 6, zp + 44, {'*': TAHTA3}, detay=True)
+        xa, xb = (cx - w - 8, cx - w - 2) if sx < 0 else (cx + w + 2, cx + w + 8)
+        if sx == yon:                              # merdiven gecidi (44)
+            kutu6(xa, cy + a_, zp, xb, cy - 22, zp + 44, {'*': TAHTA3}, detay=True, hedef=bm)
+            kutu6(xa, cy + 22, zp, xb, cy + b_, zp + 44, {'*': TAHTA3}, detay=True, hedef=bm)
         else:
-            kutu6(xa, cy - w + 6, zp, xb, cy + w - 6, zp + 44, {'*': TAHTA3}, detay=True)
-    H.kama(cx - w - 16, cy - w - 16, cx + w + 16, cy + w + 16, zp + 140, zp + 146, zp + 190, '+y', SAC, TRIM, alt=TRIM)
-    # MG siperi: guney korkulugunun icinde kum torbasi/sandik kutusu (taret bunun ustunde)
-    kutu6(cx - 40, cy - w + 6, zp, cx + 40, cy - w + 30, zp + 34, {'*': MOLOZ, '+z': TAHTA2})
-    # merdiven: 12 basamak (15 yuksek, 20 kosu) + caulk rampa; basamaklar rampanin altinda
-    L = 12 * 20 + 24
-    if yon > 0:
-        rx_ust, rx_alt = cx + w, cx + w + L
-    else:
-        rx_ust, rx_alt = cx - w, cx - w - L
-    rampa = lambda x: ZK + 1 + (zp - ZK - 1) * (rx_alt - x) / float(rx_alt - rx_ust)
-    for k in range(12):
-        xa = rx_ust + yon * k * 20
-        xb = xa + yon * 20
-        uz = xb if abs(rampa(xb) - ZK) < abs(rampa(xa) - ZK) else xa
-        zt_ = rampa(uz) - 1
-        kutu6(min(xa, xb), cy - 23, ZK - 4, max(xa, xb), cy + 23, zt_, {'*': TRIM, '+z': TAHTA2}, detay=True)   # dolu basamak (ince levha havada yuzuyordu)
-    if yon > 0:
-        H.kama(rx_ust, cy - 23, rx_alt, cy + 23, ZK, ZK + 1, zp, '-x', CAULK, CAULK, alt=CAULK, detay=True)
-    else:
-        H.kama(rx_alt, cy - 23, rx_ust, cy + 23, ZK, ZK + 1, zp, '+x', CAULK, CAULK, alt=CAULK, detay=True)
-    # merdiven ve cit arasi seridi (olu alan) de dugumsuz
-    YAPILAR['kule_merd_%d' % cx] = (min(rx_ust, rx_alt), ky0, max(rx_ust, rx_alt), cy + 27, False)
-    KULE.append((cx, cy, zp, yon, rx_ust, rx_alt))
+            kutu6(xa, cy + a_, zp, xb, cy + b_, zp + 44, {'*': TAHTA3}, detay=True, hedef=bm)
+    H.kama(cx - w - 24, cy - w - 24, cx + w + 24, cy + w + 24, zp + 140, zp + 146, zp + 190, '+y', SAC, TRIM, alt=TRIM, hedef=bm)
+    # MG siperi: guney korkulugunun icinde (taret ustunde)
+    kutu6(cx - 40, cy - w - 2, zp, cx + 40, cy - w + 22, zp + 34, {'*': MOLOZ, '+z': TAHTA2}, hedef=bm)
+    # EL MERDIVENI: iki dikme + 16'da bir basamak; tirmanma klibi ('ladder')
+    xi = cx + yon * (w + 8)                        # platform dis yuzu
+    xo = xi + yon * 6
+    lx0, lx1 = min(xi, xo), max(xi, xo)
+    for sy in (-18, 14):
+        kutu6(lx0, cy + sy, ZK - 4, lx1, cy + sy + 4, zp + 40, {'*': TRIM}, detay=True, hedef=bm)
+    for zz_ in range(int(ZK) + 14, int(zp) + 30, 16):
+        kutu6(lx0 + 1, cy - 14, zz_, lx1 - 1, cy + 14, zz_ + 3, {'*': TRIM}, detay=True, hedef=bm)
+    H.kutu(lx0, cy - 18, ZK, lx1, cy + 18, zp + 40, 'ladder', 'ladder', alt='ladder', hedef=bm)
+    # origin: taban ortasi (devrilme ekseni)
+    H.kutu(cx - 8, cy - 8, ZK - 8, cx + 8, cy + 8, ZK + 8, 'origin', 'origin', alt='origin', hedef=bm)
+    KULE_BM.append(bm)
+    KULE.append((cx, cy, zp, yon, xo))
 kule(KAPI_X - 240, ky0 + 100, -1)
 kule(KAPI_X + 240, ky0 + 100, 1)
 # kule projektorleri: kulenin kuzey dibinde
-for (cx, cy, zp, _y, _a, _b) in KULE:
-    model('light_flaksheinwerfer_on', cx, cy + 150, ZK, 180)
+for i, bm in enumerate(KULE_BM):
+    H.ent('script_brushmodel', brushlar=bm, targetname='kule', script_noteworthy=str(i + 1))
 
 # =========================================================================
 # MERKEZ BINA (BOMBA HEDEFI) -- iki katli tugla; SAGLAM hali script_brushmodel
@@ -739,7 +756,7 @@ def b_kapi(m):
 for (yon_, m_) in (('g', 3000), ('k', 2800), ('d', 2300)):
     kapi_rampasi(yon_, m_, BX0, BY0, BX1, BY1, BZ)
 B_DELIK = {
-    'g': [b_kapi(3000)] + [b_pen(x, k) for x in (2650, 2800, 3200, 3350) for k in (0, 1)] + [b_pen(3000, 1)],
+    'g': [b_kapi(3000)] + [b_pen(x, k) for x in (2650, 2800, 3200, 3350) for k in (0, 1)] + [(3000 - 32, 3000 + 32, BZU + 34, BZU + PEN_UST)],   # ust kat MG penceresi
     'k': [b_kapi(2800)] + [b_pen(x, k) for x in (2650, 3100, 3350) for k in (0, 1)],
     'b': [b_pen(y, k) for y in (2150, 2450) for k in (0, 1)],
     'd': [b_kapi(2300)] + [b_pen(y, k) for y in (2120, 2480) for k in (0, 1)] + [b_pen(2300, 1)],
@@ -756,6 +773,8 @@ for yon, L in B_DELIK.items():
     for (da, db, za, zb) in L:
         if zb - za > KAPI_H - 1:
             continue
+        if yon == 'g' and abs((da + db) / 2.0 - 3000) < 1 and za >= BZU:
+            continue                            # MG penceresi: kasa yok (kullanici)
         hd = None if za < BZU else saglam
         if yon == 'g': pencere_kasa('x', BY0, BY0 + K, da, db, za, zb, hedef=hd)
         elif yon == 'k': pencere_kasa('x', BY1 - K, BY1, da, db, za, zb, hedef=hd)
@@ -785,8 +804,8 @@ for (cx_, cy_) in ((BX0 + 160, BY1 - 160), (BX1 - 200, BY0 + 160)):
     kutu6(cx_, cy_, BZT + 16, cx_ + 48, cy_ + 48, BZT + 240, {'*': TUGLA}, detay=True, hedef=saglam)
 # ic duvar: zemin katta dogu oda (komuta) -- kapi 52x76; ust katta iki oda
 IX = 3150
-delikli_duvar('y', BY0 + K, BY1 - K, IX - 6, IX + 6, BZ, BZU - 16, [(2300 - 26, 2300 + 26, BZ, BZ + KAPI_H)], {'*': SIVA})
-delikli_duvar('y', BY0 + K, BY1 - K, IX - 6, IX + 6, BZU, BZT, [(2300 - 26, 2300 + 26, BZU, BZU + KAPI_H)], {'*': SIVA}, hedef=saglam)
+delikli_duvar('y', BY0 + K, BY1 - K, IX - 6, IX + 6, BZ, BZU - 16, [(2300 - KAPI_G / 2.0, 2300 + KAPI_G / 2.0, BZ, BZ + KAPI_H)], {'*': SIVA})
+delikli_duvar('y', BY0 + K, BY1 - K, IX - 6, IX + 6, BZU, BZT, [(2300 - KAPI_G / 2.0, 2300 + KAPI_G / 2.0, BZU, BZU + KAPI_H)], {'*': SIVA}, hedef=saglam)
 # merdiven: 10 basamak x 16 yukselti, kuzeye + gorunmez caulk rampa
 n = 10
 kosu = (my1 - my0) / float(n)
@@ -802,7 +821,7 @@ MERD_Z = lambda y: BZ + (BZU - BZ) * max(0.0, min(1.0, (y - _r0) / (_r1 - _r0)))
 # merdiven boslugu korkulugu (oyuncu duseme sinirinda)
 kutu6(mx1, my0, BZU, mx1 + 6, my1, BZU + 40, {'*': TRIM}, detay=True, hedef=saglam)
 # supurgelik + kirisler
-for (zf, kapi_bos_g, kapi_bos_k, kapi_bos_d) in ((BZ, [(2974, 3026)], [(2774, 2826)], [(2274, 2326)]),
+for (zf, kapi_bos_g, kapi_bos_k, kapi_bos_d) in ((BZ, [(3000 - KAPI_G / 2.0, 3000 + KAPI_G / 2.0)], [(2800 - KAPI_G / 2.0, 2800 + KAPI_G / 2.0)], [(2300 - KAPI_G / 2.0, 2300 + KAPI_G / 2.0)]),
                                                  (BZU, [], [], [])):
     hd = None if zf == BZ else saglam
     supurgelik('x', BY0 + K, +1, BX0 + K, IX - 6, zf, kapi_bos_g, hd)
@@ -868,16 +887,16 @@ yikik = [_kaydir(b, BINA_KAYMA, 0) for b in yikik]          # z zaten +2000
 H.ent('script_brushmodel', brushlar=yikik, targetname='bina_yikik')
 
 # merkez bina esyalari (patlamada silinir -> script_model 'bina_esya')
-B_ESYA = [('furniture_duhoc_bunker_table', 3000, 2380, BZ, 0), ('military_german_radio1_grey', 2960, 2400, BZ + 34, 180),
+B_ESYA = [('furniture_duhoc_bunker_table', 3000, 2380, BZ, 0), ('military_german_fieldradio_green', 3005, 2385, BZ + 31, 180),
           ('furniture_duhoc_chair', 3000, 2450, BZ, 270), ('furniture_duhoc_chair', 2920, 2380, BZ, 0),
-          ('furniture_file_cabinet_long_a', 2700, 2590, BZ, 270), ('furniture_bookshelveswide', 3120, 2590, BZ, 270),
+          
           ('crate01_snow', 2680, 2030, BZ, 0), ('crate02_snow', 2740, 2030, BZ, 20), ('prop_crate_wehrmacht3', 3300, 2560, BZ, 0),
           ('furniture_bed_bunker1', 3400, 2120, BZ, 90), ('furniture_bed_bunker1', 3400, 2480, BZ, 90),
           ('prop_potbelly_stove', 3250, 2560, BZ, 0),
           ('furniture_rolltopdesk', 3440, 2400, BZU, 180), ('furniture_duhoc_chair', 3380, 2400, BZU, 0),
           ('furniture_bed_bunker2', 2800, 2560, BZU, 0), ('furniture_bed_bunker2', 2980, 2560, BZU, 0),
           ('crate01_snow', 3300, 2050, BZU, 0), ('prop_crate_wehrmacht1', 2750, 2050, BZU, 0),
-          ('furniture_armoire', 3460, 2560, BZU, 180)]
+          ('furniture_armoire', 3460, 2560, BZU, 0)]
 for (m, x, y, z, yaw) in B_ESYA:
     model(m, x, y, z, yaw, sinif='script_model', targetname='bina_esya')
 for (x, y) in ((2700, 2200), (2700, 2480), (3000, 2200), (3330, 2300)):
@@ -899,23 +918,56 @@ bomba(1, IX - 6 - 3, 2160, BZ + 36, 180)          # merkez bina: ic duvarin bati
 # =========================================================================
 EV_H = 128
 # girilebilir baraka A (bati-guney): kapilar dogu ve kuzey
+YIKILIR = {'baraka_a': [], 'depo_a': [], 'baraka_b': [], 'baraka_c': [], 'baraka_d': [], 'depo_b': []}
 ev('baraka_a', 1820, 2070, 2380, 2350, ZK + 16, EV_H,
    {'d': [('kapi', 2210)], 'k': [('kapi', 2100)], 'g': [('pen', 1950), ('pen', 2150), ('pen', 2280)],
-    'b': [('pen', 2210)]}, GRI, SIVA, SAC)
+    'b': [('pen', 2210)]}, GRI, SIVA, SAC, ust=YIKILIR['baraka_a'])
 ev('baraka_b', 1820, 2540, 2240, 2790, ZK + 16, EV_H,
-   {'g': [('kapali', 2030), ('pen', 1920), ('pen', 2150)], 'd': [('pen', 2660)]}, GRI, SIVA, SAC, girilir=False)
+   {'g': [('kapali', 2030), ('pen', 1920), ('pen', 2150)], 'd': [('pen', 2660)]}, GRI, SIVA, SAC, girilir=False, ust=YIKILIR['baraka_b'])
 ev('baraka_c', 3780, 1700, 4080, 2200, ZK + 16, EV_H,
-   {'b': [('kapali', 1950), ('pen', 1800), ('pen', 2100)]}, GRI, SIVA, SAC, girilir=False, cati_yon='x')
+   {'b': [('kapali', 1950), ('pen', 1800), ('pen', 2100)]}, GRI, SIVA, SAC, girilir=False, cati_yon='x', ust=YIKILIR['baraka_c'])
 ev('baraka_d', 3780, 2350, 4080, 2800, ZK + 16, EV_H,
-   {'b': [('kapali', 2575), ('pen', 2450), ('pen', 2700)]}, GRI, SIVA, SAC, girilir=False, cati_yon='x')
+   {'b': [('kapali', 2575), ('pen', 2450), ('pen', 2700)]}, GRI, SIVA, SAC, girilir=False, cati_yon='x', ust=YIKILIR['baraka_d'])
 # depolar: girilebilir depo (kuzey-orta), kapali depo (kuzeybati)
 ev('depo_a', 3150, 2770, 3600, 2950, ZK + 16, EV_H + 16,
-   {'g': [('kapi', 3375), ('pen', 3220), ('pen', 3530)]}, GRI, GRI, SAC)
+   {'g': [('kapi', 3375), ('pen', 3220), ('pen', 3530)]}, GRI, GRI, SAC, ust=YIKILIR['depo_a'])
 ev('depo_b', 2420, 2760, 2870, 2900, ZK + 16, EV_H + 16,
-   {'g': [('kapali', 2645)], 'd': [('pen', 2830)]}, GRI, GRI, SAC, girilir=False)
+   {'g': [('kapali', 2645)], 'd': [('pen', 2830)]}, GRI, GRI, SAC, girilir=False, ust=YIKILIR['depo_b'])
 for (x, y) in ((2100, 2210), (3375, 2860)):
     isik(x, y, ZK + 16 + EV_H - 30, 300, .9)
 bomba(2, 3300, 2950 - 16 - 3, ZK + 16 + 36, 270)     # depo A: kuzey duvar ici
+# yikilir ust kisimlar: derlemede uzakta (merkez bina dersi), GSC baslangicta yerine koyar
+rnd2 = random.Random(91)
+for ad_, (x0_, y0_, x1_, y1_) in (('baraka_a', (1820, 2070, 2380, 2350)), ('depo_a', (3150, 2770, 3600, 2950)),
+                                  ('baraka_b', (1820, 2540, 2240, 2790)), ('baraka_c', (3780, 1700, 4080, 2200)),
+                                  ('baraka_d', (3780, 2350, 4080, 2800)), ('depo_b', (2420, 2760, 2870, 2900))):
+    # olculdu: 9000/2000 kaydirma dunya-hizali dokulari kaydiriyordu (kapi/kapak yamuk) ->
+    # yalniz X'te, tum doku boylarinin kati 9216 (64/48/256/512 tam bolunur)
+    H.ent('script_brushmodel', brushlar=[_kaydir(b, -9216, 0) for b in YIKILIR[ad_]], targetname='yikilir_' + ad_)
+    yk = []
+    zt_ = ZK + 16 + 40                             # kirik duvar ustu (ev kes=40)
+    for (ax_, ay_, bx_, by_) in ((x0_, y0_, x1_, y0_ + K), (x0_, y1_ - K, x1_, y1_), (x0_, y0_ + K, x0_ + K, y1_ - K), (x1_ - K, y0_ + K, x1_, y1_ - K)):
+        uzun = (bx_ - ax_) >= (by_ - ay_)
+        p_ = ax_ if uzun else ay_
+        son_ = bx_ if uzun else by_
+        while p_ < son_ - 1:
+            q_ = min(son_, p_ + rnd2.randint(50, 130))
+            hh = rnd2.choice((0, 8, 18, 30, 44, 12))
+            if hh:
+                if uzun:
+                    kutu6(p_, ay_, zt_ + ENGEL_KAYDIR, q_, by_, zt_ + hh + ENGEL_KAYDIR, {'*': YANIK, '+z': MOLOZ}, hedef=yk)
+                else:
+                    kutu6(ax_, p_, zt_ + ENGEL_KAYDIR, bx_, q_, zt_ + hh + ENGEL_KAYDIR, {'*': YANIK, '+z': MOLOZ}, hedef=yk)
+            p_ = q_
+    for i in range(5):                             # yanik kiris ve kalas yiginlari
+        xx_ = rnd2.uniform(x0_ + 60, x1_ - 220); yy_ = rnd2.uniform(y0_ + 40, y1_ - 60)
+        kutu6(xx_, yy_, ZK + 16 + ENGEL_KAYDIR, xx_ + rnd2.randint(120, 200), yy_ + 12, ZK + 28 + ENGEL_KAYDIR, {'*': YANIK}, hedef=yk)
+    H.ent('script_brushmodel', brushlar=[_kaydir(b, BINA_KAYMA, 0) for b in yk], targetname='yikik_' + ad_)
+# patlamadan sonra kamp girisi kapanir (enkaz + gorunmez duvar); derlemede uzakta
+_kb = []
+kutu6(KAPI_X - 126, ky0 - 24, ZK - 10 + ENGEL_KAYDIR, KAPI_X + 126, ky0 + 24, ZK + 400 + ENGEL_KAYDIR, {'*': 'clip'}, hedef=_kb)
+# kullanici: girise tahta yigini konmasin, yalniz gorunmez duvar
+H.ent('script_brushmodel', brushlar=[_kaydir(b, BINA_KAYMA, 0) for b in _kb], targetname='kapi_enkaz')
 bomba(3, 1820 + 16 + 3, 2150, ZK + 16 + 36, 0)       # baraka A: bati duvar ici
 EV_ESYA = [('furniture_bed_bunker1', 1900, 2250, 90), ('furniture_bed_bunker1', 2000, 2250, 90),
            ('furniture_bed_bunker1', 2300, 2290, 90), ('prop_potbelly_stove', 2200, 2310, 0),
@@ -925,8 +977,26 @@ EV_ESYA = [('furniture_bed_bunker1', 1900, 2250, 90), ('furniture_bed_bunker1', 
 for (m, x, y, yaw) in EV_ESYA:
     model(m, x, y, ZK + 16, yaw)
 
+# kullanici: esyalarin icinden geciliyordu (misc/script_model carpismasiz) ->
+# her esyaya gorunmez carpisma kutusu (clip: oyuncu + AI)
+ESYA_KUTU = {'furniture_duhoc_bunker_table': (30, 40), 'furniture_bed_bunker1': (44, 70), 'furniture_bed_bunker2': (44, 70),
+             'prop_potbelly_stove': (18, 60), 'furniture_rolltopdesk': (28, 50), 'furniture_duhoc_chair': (11, 40),
+             'furniture_utilitychair1': (11, 40), 'furniture_smallfoldingtable': (22, 34), 'crate01_snow': (22, 44),
+             'crate02_snow': (22, 44), 'prop_crate_wehrmacht1': (24, 40), 'prop_crate_wehrmacht2': (24, 40),
+             'prop_crate_wehrmacht3': (24, 40), 'prop_barrel_benzin_snow': (14, 46), 'furniture_armoire': (30, 90)}
+def esya_klip(m, x, y, z):
+    if m not in ESYA_KUTU:
+        return
+    r_, h_ = ESYA_KUTU[m]
+    H.kutu(x - r_, y - r_, z, x + r_, y + r_, z + h_, 'clip', 'clip', alt='clip')
+for (m, x, y, z, yaw) in B_ESYA:
+    esya_klip(m, x, y, z)
+for (m, x, y, yaw) in EV_ESYA:
+    esya_klip(m, x, y, ZK + 16)
+
 # kamp ici dekor ve siperler
-KAMP_DEKOR = [('vehicle_opel_blitz_snow_static', 3700, 1640, 0),
+model('vehicle_opel_blitz_snow_static', 3700, 1640, ZK, 0, sinif='script_model', targetname='kamp_kamyon')
+KAMP_DEKOR = [
               ('crate01_snow', 2560, 1760, 0), ('crate02_snow', 2610, 1760, 20),
               ('prop_barrel_green_snowside', 1900, 2380, 0),
               ('military_sandbag_snow_longsection', 2900, 1880, 0), ('military_sandbag_snow_longsection', 3100, 1880, 0)]
@@ -980,7 +1050,7 @@ for _m in range(0, int(hat_uzunluk(_kh)), 5):
     if _d < _en:
         _en, KOPRU_M = _d, _m
 KONVOY_ARA = 340
-PATLAMA = hat_nokta(_kh, KOPRU_M + KONVOY_ARA)     # pusu merkezi: oyuncunun kamyonu
+PATLAMA = hat_nokta(_kh, KOPRU_M + KONVOY_ARA + 260)     # pusu merkezi: oyuncunun kamyonu
 # kopru engeli: arkadaki kamyon kopru ustunde patlayinca geri donus kapanir
 _bl = []
 H.kutu(_kx - 130, _ky - 132, KOPRU_Z[0] + ENGEL_KAYDIR, _kx - 114, _ky + 132, KOPRU_Z[0] + 220 + ENGEL_KAYDIR, SINIR, SINIR, alt=SINIR, hedef=_bl)

@@ -71,7 +71,7 @@ Get-Process CoD2SP_s -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep 1
 Remove-Item "$r\__CoD2SP_s" -Force -ErrorAction SilentlyContinue
 Remove-Item "$r\main\console.log" -ErrorAction SilentlyContinue
-$arg = "+set r_fullscreen 0 +set r_mode 1280x720 +set developer 1 +set logfile 2 +set thereisacow 1337 +set com_introplayed 1 $Ek +devmap burya"
+$arg = "+set r_fullscreen 0 +set r_mode 1280x720 +set developer 1 +set logfile 2 +set snd_volume 0.7 +set r_displayRefresh 165 +set vid_xpos 0 +set vid_ypos 0 +set thereisacow 1337 +set com_introplayed 1 $Ek +devmap burya"
 $p = Start-Process -FilePath "$r\CoD2SP_s.exe" -WorkingDirectory $r -ArgumentList $arg -PassThru
 $log = "$r\main\console.log"
 $global:DIYALOG = $null

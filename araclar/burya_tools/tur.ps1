@@ -24,7 +24,6 @@ public class KrFare {
   public static void Tasi(IntPtr h) { MoveWindow(h, 1920 + 300, 160, 1296, 758, true); }
   public static void Tikla(IntPtr h) {
     IntPtr onceki = GetForegroundWindow(); POINT eski; GetCursorPos(out eski);
-    Tasi(h); System.Threading.Thread.Sleep(300);
     RECT r; GetWindowRect(h, out r); SetForegroundWindow(h);
     SetCursorPos((r.L + r.R) / 2, (r.T + r.B) / 2);
     mouse_event(2, 0, 0, 0, 0); System.Threading.Thread.Sleep(60); mouse_event(4, 0, 0, 0, 0);
@@ -93,7 +92,7 @@ Start-Sleep 1
 Remove-Item "$r\__CoD2SP_s" -Force -ErrorAction SilentlyContinue
 Remove-Item "$r\main\console.log" -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force "$r\burya_tools\ekran" | Out-Null
-$arg = "+set r_fullscreen 0 +set r_mode 1280x720 +set cg_fov 80 +set developer 1 +set logfile 2 +set thereisacow 1337 +set com_introplayed 1 +set kr_tur $Mod +set snd_volume 0 +set mus_volume 0 +devmap $Harita"
+$arg = "+set r_fullscreen 0 +set r_mode 1280x720 +set cg_fov 80 +set developer 1 +set logfile 2 +set snd_volume 0.7 +set r_displayRefresh 165 +set vid_xpos 0 +set vid_ypos 0 +set thereisacow 1337 +set com_introplayed 1 +set kr_tur $Mod +devmap $Harita"
 $p = Start-Process -FilePath "$r\CoD2SP_s.exe" -WorkingDirectory $r -ArgumentList $arg -PassThru
 $t = 0; $tiklandi = $false; $adim = 1
 $log = "$r\main\console.log"
