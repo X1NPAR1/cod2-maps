@@ -750,8 +750,7 @@ ust_kapilar()
 	level.kapi_bati disconnectpaths();
 	level thread sag_kapi_oyuncu();
 	level thread sol_kapi_pusu();
-	level waittill("kapilari_ac");
-	level.kapi_bati kapi_kir(178, "kiymik");        // sag kapiyi oyuncu acar
+	// bati kapi A sirasinda pusuda kirilir; savunmada acilmaz. Sag kapiyi oyuncu acar.
 }
 
 // kapi menteseden odanin icine duz acilir; yalniz kirilma sesi (efekt yok)
@@ -778,24 +777,20 @@ sag_kapi_oyuncu()
 	level.kapi_dogu kapi_kir(-178, "kiymik");
 }
 
-// sol (bati) oda: oyuncu merdivenin son basamagina gelince arkadaki Alman
-// kapiyi kirar ve hemen ates eder
-// sol (bati) oda: oyuncu merdivenin son basamagina gelince arkada iki Alman
-// dogar; 1 sn sonra kapi carparak acilir, Almanlar cikip saldirir
+// SOL (BATI) ODA PUSUSU (kullanici): A gorevinde oyuncu merdivenin ortasina
+// gelince odada 3 Alman dogar, kapi carparak acilir; biri disari cikip saldirir,
+// ikisi odadan ates eder. Bu 3 asker A grubundandir (karakol); oyuncu merdivene
+// hic cikmazsa A'nin geri kalani bitince pusu yine tetiklenir (A kilitlenmez).
 sol_kapi_pusu()
 {
 	sp = getentarray("kapi_alman", "targetname");
 	for (;;)
 	{
 		p = level.player.origin;
-		if (p[0] > -330 && p[0] < -180 && p[1] > 600 && p[1] < 700 && p[2] > 190)
+		if (p[0] > -330 && p[0] < -180 && p[1] > 430 && p[1] < 700 && p[2] > 100)
 			break;
-		if (flag("a_temiz"))
-		{
-			for (i = 0; i < sp.size; i++)
-				sp[i] delete();
-			return;
-		}
+		if (getAIGroupCount("karakol") <= sp.size)
+			break;
 		wait 0.1;
 	}
 	alman = [];
@@ -807,24 +802,26 @@ sol_kapi_pusu()
 		if (spawn_failed(g))
 			continue;
 		g.goalradius = 16;
-		g.ignoreall = true;                     // kapi acilana kadar kimse saldirmaz
-		g.ignoreme = true;
+		g.ignoreall = true;
 		g setgoalpos(g.origin);
 		alman[alman.size] = g;
 	}
-	wait 1;
-	level.kapi_bati kapi_kir(178, "toz");
-	wait 0.9;                                   // kanat tamamen acilsin
+	wait 0.3;
+	level.kapi_bati kapi_kir(178, "toz");       // cat! kapi bir anda acilir
+	wait 0.6;
 	for (i = 0; i < alman.size; i++)
 	{
 		if (!isalive(alman[i]))
 			continue;
 		alman[i].ignoreall = false;
-		alman[i].ignoreme = false;
-		alman[i].favoriteenemy = level.player;
-		alman[i].goalradius = 96;
-		alman[i] setgoalpos(level.player.origin);
-		wait 0.4;
+		if (i == 0)
+		{
+			alman[i].favoriteenemy = level.player;   // kapidan cikip saldirir
+			alman[i].goalradius = 96;
+			alman[i] setgoalpos(level.player.origin);
+		}
+		else
+			alman[i].goalradius = 48;                // odadan ates eder
 	}
 }
 
@@ -1748,7 +1745,7 @@ bolum_sonu()
 	perde fadeOverTime(7);                      // kullanici: 7 sn
 	perde.alpha = 1;
 	wait 7.5;
-	missionSuccess("credits", false);       // zincirin son halkasi (stok _endmission)
+	missionSuccess("burya", false);         // zincir: metel -> burya -> jenerik
 }
 
 // --------------------------------------------------------------------------

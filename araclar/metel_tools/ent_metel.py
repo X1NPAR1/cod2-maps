@@ -362,7 +362,8 @@ def yerlestir(G):
     for i, c in enumerate(['actor_ally_rus_reg_ppsh', 'actor_ally_rus_reg_mosin', 'actor_ally_rus_reg_svt40',
                            'actor_ally_rus_reg_pps42']):
         # duz kuzey yolu (bina kuzeybatisi); dik tepede dugum yoktu, takviye kaliyordu
-        sp(c, -1500 + i * 90, 1180, None, 0, targetname='takviye_kuzey', spawnflags=1, count=1)
+        # kullanici viewpos: (-206, 2779) -- savunmada olen Sovyetler burada dogar
+        sp(c, -206 - 60 + (i % 2) * 120, 2779 - (i // 2) * 110, None, 270, targetname='takviye_kuzey', spawnflags=1, count=1)
     tx, ty = G.W(500, 997)           # guney yolu, tepe arkasi (uc kisim yol agindan kopuk, olculdu)
     for i, c in enumerate(TAKVIYE_C):
         sp(c, tx - 60 + (i % 2) * 120, ty - (i // 2) * 110, targetname='takviye', target='player', spawnflags=1)
@@ -520,8 +521,12 @@ def yerlestir(G):
          bas + [W(560, 640), W(505, 628)], 20, 5, range(9), SOV, takim='allies')
 
     # sol (bati) ust oda: kapiyi kirip saldiracak Alman (kapinin hemen arkasinda)
-    for (dx, dy, c) in ((-160, 700, 'actor_axis_snow_wehr_reg_mp40'), (-210, 745, 'actor_axis_snow_wehr_reg_kar98k')):   # dosya dolabindan uzak (olculdu)
-        H.ent(c, origin=(XW + dx, dy, ZU + 4), angles=(0, 0, 0), targetname='kapi_alman', spawnflags=1, count=1)
+    # 3 Alman (kullanici): ilki kapidan cikip saldirir, ikisi odadan ates eder.
+    # A grubuna (karakol) sayilir: pusu olmadan A bitmez.
+    for (dx, dy, c) in ((-160, 700, 'actor_axis_snow_wehr_reg_mp40'), (-210, 745, 'actor_axis_snow_wehr_reg_kar98k'),
+                        (-130, 590, 'actor_axis_snow_wehr_reg_kar98k')):   # kanat donus yaricapi disinda
+        H.ent(c, origin=(XW + dx, dy, ZU + 4), angles=(0, 0, 0), targetname='kapi_alman', script_aigroup='karakol',
+              spawnflags=1, count=1)
         say[c] = say.get(c, 0) + 1
 
     # =====================================================================

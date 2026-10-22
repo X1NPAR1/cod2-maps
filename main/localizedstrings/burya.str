@@ -1,0 +1,53 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "burya"
+
+REFERENCE           OBJ_KONVOY
+LANG_ENGLISH        "Konvoyla birlikte ilerle ve Alman karakoluna ulas."
+
+REFERENCE           OBJ_PUSU
+LANG_ENGLISH        "Siper alin! Alman saldirisini püskürt."
+
+REFERENCE           OBJ_KAMP
+LANG_ENGLISH        "Alman kampina ilerle."
+
+REFERENCE           OBJ_GIRIS
+LANG_ENGLISH        "Kamp girisini ele geçir: MG42 kulelerini sustur."
+
+REFERENCE           OBJ_SAVUN
+LANG_ENGLISH        "Sovyet takviyeleri ulasana kadar kampin girisini savun."
+
+REFERENCE           OBJ_ELE
+LANG_ENGLISH        "Alman kampini ele geçir."
+
+REFERENCE           OBJ_BEKLE
+LANG_ENGLISH        "Kamp kontrol altinda. Leonov'un emirlerini bekle."
+
+REFERENCE           OBJ_BOMBA
+LANG_ENGLISH        "Kampa üç patlayici yerlestir: merkez bina, depo, baraka."
+
+REFERENCE           OBJ_KAC
+LANG_ENGLISH        "Hemen disari çik! Patlamadan önce güvenli mesafeye ulas!"
+
+REFERENCE           OBJ_LEONOV
+LANG_ENGLISH        "Leonov'un yanina git."
+
+REFERENCE           MSG_TAKVIYE
+LANG_ENGLISH        "Sovyet takviyeleri geldi!"
+
+REFERENCE           BITTI
+LANG_ENGLISH        "Kar Firtinasi Harekati tamamlandi."
+
+REFERENCE           INTRO_TITLE
+LANG_ENGLISH        ""Operation Snowstorm""
+
+REFERENCE           INTRO_PLACE
+LANG_ENGLISH        "Kotelnikovo Kuzeyi, Don Cephesi, S.S.C.B."
+
+REFERENCE           INTRO_DATE
+LANG_ENGLISH        "2 Subat 1943"
+
+REFERENCE           INTRO_INFO
+LANG_ENGLISH        "3. Muhafiz Ordusu, Leonov Takimi, Saat 07:40"
+
+ENDMARKER

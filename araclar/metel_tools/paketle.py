@@ -11,7 +11,7 @@ def kopya(kaynak, hedef):
     os.makedirs(os.path.dirname(hedef), exist_ok=True)
     shutil.copy2(kaynak, hedef)
 
-for h in ('krasnoye', 'metel'):
+for h in ('krasnoye', 'metel', 'burya'):
     for f in glob.glob(os.path.join(OYUN, 'main', 'maps', h + '*')):
         ad = os.path.basename(f)
         if ad.endswith(('.d3dprt', '.d3dpoly')) or 'duman' in ad:
