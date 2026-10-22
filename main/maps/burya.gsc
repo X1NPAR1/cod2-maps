@@ -423,6 +423,9 @@ oyuncu_in(k)
 	level.player allowLeanLeft(true);
 	level.player allowLeanRight(true);
 	level thread sinir_bekcisi();
+	g = getent("sinir_kapi_konvoy", "targetname");   // yol gecitlerinde gercek duvar
+	if (isdefined(g))
+		g moveZ(0 - 4000, 0.05);
 	for (i = 0; i < level.ekip.size; i++)
 		if (isalive(level.ekip[i]))
 			level.ekip[i].ignoreall = false;
@@ -476,6 +479,9 @@ takviye()
 	level thread takviye_kamyonu(5, "takviye2", getent("yan_kapi", "targetname").origin);
 	wait 25;
 	flag_set("takviye_indi");
+	g = getent("sinir_kapi_takviye", "targetname");
+	if (isdefined(g))
+		g moveZ(0 - 4000, 0.05);
 }
 
 takviye_kamyonu(grup, ad, hedef)
@@ -1050,13 +1056,26 @@ muzik_bir(alias)
 sinir_bekcisi()
 {
 	son = level.player.origin;
+	disari = 0;
 	for (;;)
 	{
 		p = level.player.origin;
+		// sinirda gercek gorunmez duvar var; betik yalniz kacak durumlarda (1 sn
+		// boyunca disarida) geri alir -- her karede isinlama ekrani titretiyordu
 		if (cokgen_icinde(p, level.sinir))
+		{
 			son = p;
+			disari = 0;
+		}
 		else
-			level.player setorigin(son);
+		{
+			disari++;
+			if (disari > 20)
+			{
+				level.player setorigin(son);
+				disari = 0;
+			}
+		}
 		wait 0.05;
 	}
 }
@@ -1155,6 +1174,7 @@ test_oldur()
 ekran_turu()
 {
 	level.player takeallweapons();
+	level thread test_olumsuz();             // isinlanmada dusme hasari olduruyordu
 	n = [];
 	a = [];
 	n[n.size] = (0, -100, 5200);  a[a.size] = (89, 90, 0);   // tum harita
@@ -1171,18 +1191,18 @@ ekran_turu()
 	n[n.size] = (1500, 700, 230);  a[a.size] = (4, 60, 0);   // kampa yol
 	n[n.size] = (2300, 900, 220);  a[a.size] = (4, 90, 0);   // kamp kapisi dis
 	n[n.size] = (2300, 1420, 200);  a[a.size] = (10, 90, 0);   // kapi yakin
-	n[n.size] = (1950, 1450, 260);  a[a.size] = (15, 60, 0);   // sol kule
-	n[n.size] = (2650, 1450, 260);  a[a.size] = (15, 120, 0);   // sag kule
-	n[n.size] = (2540, 1450, 330);  a[a.size] = (25, 90, 0);   // kule MG siperi
+	n[n.size] = (1950, 1350, 200);  a[a.size] = (6, 60, 0);   // sol kule
+	n[n.size] = (2650, 1350, 200);  a[a.size] = (6, 120, 0);   // sag kule
+	n[n.size] = (2540, 1400, 290);  a[a.size] = (12, 90, 0);   // kule MG siperi
 	n[n.size] = (2800, 1600, 200);  a[a.size] = (10, 180, 0);   // kule merdiveni
 	n[n.size] = (2300, 1750, 200);  a[a.size] = (4, 90, 0);   // kapi ici
-	n[n.size] = (2100, 1950, 150);  a[a.size] = (4, 40, 0);   // baraka A dis
+	n[n.size] = (2100, 1930, 100);  a[a.size] = (4, 90, 0);   // baraka A dis
 	n[n.size] = (1950, 2220, 100);  a[a.size] = (4, 0, 0);   // baraka A ic
-	n[n.size] = (2100, 2420, 150);  a[a.size] = (4, 90, 0);   // baraka B dis
-	n[n.size] = (3650, 1900, 150);  a[a.size] = (4, 10, 0);   // baraka C dis
-	n[n.size] = (3650, 2550, 150);  a[a.size] = (4, 10, 0);   // baraka D dis
-	n[n.size] = (2650, 2700, 150);  a[a.size] = (4, 90, 0);   // depo B dis
-	n[n.size] = (3375, 2700, 150);  a[a.size] = (4, 90, 0);   // depo A dis
+	n[n.size] = (2050, 2450, 100);  a[a.size] = (4, 90, 0);   // baraka B dis
+	n[n.size] = (3620, 1950, 100);  a[a.size] = (4, 0, 0);   // baraka C dis
+	n[n.size] = (3620, 2600, 100);  a[a.size] = (4, 0, 0);   // baraka D dis
+	n[n.size] = (2650, 2690, 90);  a[a.size] = (4, 90, 0);   // depo B dis
+	n[n.size] = (3375, 2690, 90);  a[a.size] = (4, 90, 0);   // depo A dis
 	n[n.size] = (3300, 2860, 110);  a[a.size] = (10, 90, 0);   // depo A ic + bomba
 	n[n.size] = (3000, 1800, 200);  a[a.size] = (2, 90, 0);   // merkez bina dis on
 	n[n.size] = (3700, 2300, 200);  a[a.size] = (2, 180, 0);   // merkez bina dis dogu

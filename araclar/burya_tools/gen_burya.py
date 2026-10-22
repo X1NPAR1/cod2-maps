@@ -37,7 +37,7 @@ SIVA = 'stalingradwinter_plaster01'
 KORNIS = 'stalingradwinter_concretetrim01'
 TABAN = 'stalingradwinter_wood_floor'
 CATI = 'stalingradwinter_roof_slate01'
-SAC = 'stalingradwinter_metal_roof'             # baraka catisi (pasli sac)
+SAC = 'stalingradwinter_snow02'                 # baraka/kule catisi: karla kapli (tur: pasli sac pembe yama gibiydi)
 TAHTA = 'stalingradwinter_woodplank01'
 TAHTA2 = 'stalingradwinter_woodplank02'
 TAHTA3 = 'stalingradwinter_woodplank03'
@@ -397,6 +397,8 @@ def kutu6(x0, y0, z0, x1, y1, z1, m, detay=False, olcek=None, hedef=None):
         H.kutu6(x0, y0, z0, x1, y1, z1, m, olcek=olcek, detay=detay, hedef=hedef)
 
 # ---------------------------------------------------------------- gorunmez sinir
+SINIR_KAPI_K, SINIR_KAPI_T = [], []        # konvoy/orman gecidi, takviye gecidi
+ENGEL_KAYDIR_S = 4000
 for i in range(len(POLI)):
     (ax, ay), (bx, by) = POLI[i], POLI[(i + 1) % len(POLI)]
     L = math.hypot(bx - ax, by - ay)
@@ -414,7 +416,24 @@ for i in range(len(POLI)):
             k += 1
         if not parca[j][2]:
             dikey_levha(parca[j][0], parca[k][1], -600, 2400, SINIR)
+        else:
+            # yol gecidi: gercek gorunmez duvar da (betikle geri isinlama ekrani titretiyordu --
+            # kullanici). Derlemede +2000 (yol agi bozulmasin), GSC indirir.
+            mx = (parca[j][0][0] + parca[k][1][0]) / 2.0; my = (parca[j][0][1] + parca[k][1][1]) / 2.0
+            hd = SINIR_KAPI_T if _seg(mx, my, *GIRIS_W['takviye'][:2]) < 600 or min(_seg(mx, my, GIRIS_W['takviye'][q], GIRIS_W['takviye'][q + 1]) for q in range(len(GIRIS_W['takviye']) - 1)) < 260 else SINIR_KAPI_K
+            (ax_, ay_), (bx_, by_) = parca[j][0], parca[k][1]
+            L_ = math.hypot(bx_ - ax_, by_ - ay_) or 1
+            nx_, ny_ = -(by_ - ay_) / L_ * 8, (bx_ - ax_) / L_ * 8
+            pp = [(ax_ - nx_, ay_ - ny_), (bx_ - nx_, by_ - ny_), (bx_ + nx_, by_ + ny_), (ax_ + nx_, ay_ + ny_)]
+            z0_, z1_ = -600 + ENGEL_KAYDIR_S, 2400 + ENGEL_KAYDIR_S
+            yuz = [((ax_, ay_, z0_), (bx_, by_, z0_), (ax_ + nx_, ay_ + ny_, z0_)), ((ax_, ay_, z1_), (bx_, by_, z1_), (ax_ + nx_, ay_ + ny_, z1_))]
+            for q in range(4):
+                q0, q1 = pp[q], pp[(q + 1) % 4]
+                yuz.append(((q0[0], q0[1], z0_), (q1[0], q1[1], z0_), (q0[0], q0[1], z1_)))
+            H.konveks(yuz, [SINIR] * 6, hedef=hd)
         j = k + 1
+H.ent('script_brushmodel', brushlar=SINIR_KAPI_K, targetname='sinir_kapi_konvoy')
+H.ent('script_brushmodel', brushlar=SINIR_KAPI_T, targetname='sinir_kapi_takviye')
 # dere kenarlari: oyuncu dereye inemez (kopru haric)
 for kenar in (-1, 1):
     y = DERE[0][1]
@@ -676,7 +695,7 @@ def kule(cx, cy, yon):
         xb = xa + yon * 20
         uz = xb if abs(rampa(xb) - ZK) < abs(rampa(xa) - ZK) else xa
         zt_ = rampa(uz) - 1
-        kutu6(min(xa, xb), cy - 23, zt_ - 6, max(xa, xb), cy + 23, zt_, {'*': TRIM, '+z': TAHTA2}, detay=True)
+        kutu6(min(xa, xb), cy - 23, ZK - 4, max(xa, xb), cy + 23, zt_, {'*': TRIM, '+z': TAHTA2}, detay=True)   # dolu basamak (ince levha havada yuzuyordu)
     if yon > 0:
         H.kama(rx_ust, cy - 23, rx_alt, cy + 23, ZK, ZK + 1, zp, '-x', CAULK, CAULK, alt=CAULK, detay=True)
     else:

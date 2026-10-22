@@ -28,7 +28,12 @@ public class KrFare {
     RECT r; GetWindowRect(h, out r); SetForegroundWindow(h);
     SetCursorPos((r.L + r.R) / 2, (r.T + r.B) / 2);
     mouse_event(2, 0, 0, 0, 0); System.Threading.Thread.Sleep(60); mouse_event(4, 0, 0, 0, 0);
-    System.Threading.Thread.Sleep(400);
+    System.Threading.Thread.Sleep(2000);
+    // kullanici: hem N hem G (noclip + god)
+    keybd_event(0x4E, 0, 0, 0); System.Threading.Thread.Sleep(80); keybd_event(0x4E, 0, 2, 0);
+    System.Threading.Thread.Sleep(300);
+    keybd_event(0x47, 0, 0, 0); System.Threading.Thread.Sleep(80); keybd_event(0x47, 0, 2, 0);
+    System.Threading.Thread.Sleep(300);
     if (onceki != IntPtr.Zero && onceki != h) SetForegroundWindow(onceki);
     SetCursorPos(eski.X, eski.Y);
   }
@@ -92,7 +97,7 @@ $arg = "+set r_fullscreen 0 +set r_mode 1280x720 +set cg_fov 80 +set developer 1
 $p = Start-Process -FilePath "$r\CoD2SP_s.exe" -WorkingDirectory $r -ArgumentList $arg -PassThru
 $t = 0; $tiklandi = $false; $adim = 1
 $log = "$r\main\console.log"
-while ($t -lt 600 -and $adim -le $Nokta) {
+while ($t -lt 2400 -and $adim -le $Nokta) {
     Start-Sleep -Milliseconds 500; $t++
     if ($p.HasExited) { "OYUN KAPANDI"; break }
     $k = [KrDiyalog]::Oku($p.Id)

@@ -28,7 +28,12 @@ public class KrFare {
     RECT r; GetWindowRect(h, out r); SetForegroundWindow(h);
     SetCursorPos((r.L + r.R) / 2, (r.T + r.B) / 2);
     mouse_event(2, 0, 0, 0, 0); System.Threading.Thread.Sleep(60); mouse_event(4, 0, 0, 0, 0);
-    System.Threading.Thread.Sleep(400);
+    System.Threading.Thread.Sleep(2000);
+    // kullanici: hem N hem G (noclip + god)
+    keybd_event(0x4E, 0, 0, 0); System.Threading.Thread.Sleep(80); keybd_event(0x4E, 0, 2, 0);
+    System.Threading.Thread.Sleep(300);
+    keybd_event(0x47, 0, 0, 0); System.Threading.Thread.Sleep(80); keybd_event(0x47, 0, 2, 0);
+    System.Threading.Thread.Sleep(300);
     if (onceki != IntPtr.Zero && onceki != h) SetForegroundWindow(onceki);
     SetCursorPos(eski.X, eski.Y);
   }

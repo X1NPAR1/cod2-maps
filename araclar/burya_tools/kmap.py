@@ -22,6 +22,9 @@ VARSAYILAN = (128, 128)
 # Olculen gorunus (b2 tur goruntuleri): 256'da ahsap/tugla gerilip bulaniklasti.
 for _m in ('sky_tankhunt',):
     OLCEK[_m] = (128, 128)
+# burya tur goruntusu: greywood (512x64) varsayilanda gerilip dalgali gorunuyordu
+OLCEK['stalingradwinter_greywood'] = (256, 32)
+OLCEK['mtl_fence_wood'] = (48, 192)
 
 
 class Harita:

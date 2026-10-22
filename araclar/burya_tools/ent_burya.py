@@ -283,6 +283,10 @@ def yerlestir(G):
     for (cx, cy, zp, yon, rx_ust, rx_alt) in G.KULE:
         for (dx, dy) in ((-30, -30), (30, -30), (-30, 30), (30, 30)):
             ent('node_pathnode', origin=(cx + dx, cy + dy, zp + 8))
+        # korkuluk gecidinin iki yani: platform <-> rampa ustu (olculdu: sol kulede platform adaydi)
+        ent('node_pathnode', origin=(cx + yon * 50, cy, zp + 8))
+        xg = rx_ust + yon * 30
+        ent('node_pathnode', origin=(round(xg), cy, round(ZK + 1 + (zp - ZK - 1) * (rx_alt - xg) / float(rx_alt - rx_ust) + 12, 1)))
         n = 5
         for k in range(1, n):
             x = rx_ust + (rx_alt - rx_ust) * k / float(n)
@@ -390,6 +394,12 @@ def yerlestir(G):
              'actor_axis_snow_wehr_reg_g43', 'actor_axis_snow_wehr_reg_mp40']
     def sp(c, x, y, oda=None, aci=90, **kv):
         p = yer_bul(x, y, 28, oda, 220)
+        if p and oda is None and not egim_ok(*p, adim=40):        # yamaca gomulmesin ('in solid' olculdu)
+            for (dx, dy) in ((60, 0), (-60, 0), (0, 60), (0, -60), (120, 0), (-120, 0), (0, 120), (0, -120)):
+                q = yer_bul(p[0] + dx, p[1] + dy, 28, oda, 60)
+                if q and egim_ok(*q, adim=40):
+                    p = q
+                    break
         if not p:
             raise SystemExit('SPAWNER YERI YOK: %s %s %s' % (c, x, y))
         z = (oda_z(oda) + 4) if oda else zemin(*p) + 4
