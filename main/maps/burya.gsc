@@ -1894,7 +1894,7 @@ bolum_sonu()
 	perde.alpha = 1;
 	wait 7.5;
 	test_yaz("GOREV TAMAM");
-	missionSuccess("credits", false);
+	missionSuccess("kumtepe", false);              // zincir: burya -> kumtepe
 }
 
 // --------------------------------------------------------------------------

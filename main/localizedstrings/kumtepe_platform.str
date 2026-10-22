@@ -1,0 +1,8 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "kumtepe platform"
+
+REFERENCE           TELSIZ
+LANG_ENGLISH        "Tusa BAS: [&&1] Telsizle konumu bildir, yardim iste."
+
+ENDMARKER

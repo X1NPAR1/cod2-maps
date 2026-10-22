@@ -1,0 +1,38 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "kumtepe"
+
+REFERENCE           OBJ_YOL
+LANG_ENGLISH        "Kamyonla köye ulas."
+
+REFERENCE           OBJ_KOY
+LANG_ENGLISH        "Köyü ele geçir: binalardaki Almanlari temizle."
+
+REFERENCE           OBJ_SAVUN
+LANG_ENGLISH        "Köyü Alman karsi saldirisina karsi savun."
+
+REFERENCE           OBJ_TANK
+LANG_ENGLISH        "Panzer saldirisina karsi hayatta kal!"
+
+REFERENCE           OBJ_PRICE
+LANG_ENGLISH        "Yüzbasi Price'in yanina git."
+
+REFERENCE           OBJ_TELSIZ
+LANG_ENGLISH        "Diger evdeki telsize ulas ve yardim iste."
+
+REFERENCE           MSG_CRUSADER
+LANG_ENGLISH        "7. Zirhli Tümen geldi!"
+
+REFERENCE           INTRO_TITLE
+LANG_ENGLISH        ""Operation Sandstorm""
+
+REFERENCE           INTRO_PLACE
+LANG_ENGLISH        "Kum Tepe, El Alamein yakinlari, Misir"
+
+REFERENCE           INTRO_DATE
+LANG_ENGLISH        "24 Ekim 1942"
+
+REFERENCE           INTRO_INFO
+LANG_ENGLISH        "8. Ordu, Yüzbasi Price'in mangasi, saat 06:15"
+
+ENDMARKER

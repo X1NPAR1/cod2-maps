@@ -1,14 +1,15 @@
-# Call of Duty 2 — Sovyet Tek Oyunculu Haritaları
+# Call of Duty 2 — Tek Oyunculu Haritalar
 
-Üç bölümlük, birbirini izleyen özel tek oyunculu harita.
+Birbirini izleyen özel tek oyunculu haritalar: üç Sovyet bölümü ve bir İngiliz bölümü.
 
 | Sıra | Harita | Bölüm | Tarih |
 |---|---|---|---|
 | 1 | `krasnoye` | Krasnoye Kolhozu — köyü temizle ve savun | 14 Aralık 1942 |
 | 2 | `metel` | Operatsiya Metel — karakol ve iki havan mevzisi | 8 Ocak 1943 |
 | 3 | `burya` | Operation Snowstorm (Kar Fırtınası) — konvoy pususu, Alman kampı, üç patlayıcı | 2 Şubat 1943 |
+| 4 | `kumtepe` | Operation Sandstorm — çöl köyü, Panzer saldırısı, Crusader kurtarması (İngiliz) | 24 Ekim 1942 |
 
-Bölümler sırayla yüklenir: `krasnoye` → `metel` → `burya` → jenerik.
+Bölümler sırayla yüklenir: `krasnoye` → `metel` → `burya` → `kumtepe` → jenerik.
 
 ## Kurulum
 
@@ -33,6 +34,13 @@ Oyunun 1.3 yamasıyla test edildi. Stok iwd dosyaları dışında başka bir şe
 3. Kamp içi ve binalar temizlenir; ardından ormanın her yönünden 50 Almanlık karşı saldırı gelir. Sovyetler karakol binasının pencerelerine, iki kişi el merdiveniyle kulelere, biri üst kat MG'sine geçer; bomba evinde 7 Sovyet savunur.
 4. Üç patlayıcı kurulur, 20 sn'lik sayaç başlar; Sovyetler kamptan çekilip çömelerek izler, oyuncu çıkınca binalarda Almanlar belirir.
 5. Ardışık patlamalarda binalar çöker, kuleler devrilir, kamp kamyonu yanar; Leonov'un sözleriyle bölüm biter.
+
+**Kumtepe (İngiliz, El Alamein):**
+1. Akşam, kumlu ve sisli çölde Cpt. Price ve 7 İngilizle kamyonun kasasında köye gelinir; yolda bir Stuka yola dalıp ateş eder.
+2. Dört binalı köydeki 15 Alman temizlenir; ardından 30 sn'de bir 10'arlı dalgalar ve dört yönden yarı paletliler gelir.
+3. Dört Panzer II batı vadisinden gelir; bir Stuka kapalı evin köşesini bombalar, Panzer'ler iki katlı evi iki atışta yıkar.
+4. Telsizle yardım istenir; Crusader'lar gelir, biri vurulur, diğerleri Panzer'leri patlatır; 15 İngiliz köye dağılır.
+5. Price meydanda askerlerin oluşturduğu halkada zafer konuşmasını yapar.
 
 ## Kaynak ve araçlar
 
