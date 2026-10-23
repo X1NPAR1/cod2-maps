@@ -1658,7 +1658,7 @@ bolum_sonu()
 	perde.alpha = 1;
 	wait 7.5;
 	test_yaz("GOREV TAMAM");
-	missionSuccess("credits", false);
+	missionSuccess("kasrelbab", false);          // zincir: kumtepe -> kasrelbab
 }
 
 // --------------------------------------------------------------------------

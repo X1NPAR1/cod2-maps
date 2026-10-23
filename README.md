@@ -1,6 +1,6 @@
 # Call of Duty 2 — Tek Oyunculu Haritalar
 
-Birbirini izleyen özel tek oyunculu haritalar: üç Sovyet bölümü ve bir İngiliz bölümü.
+Birbirini izleyen özel tek oyunculu haritalar: üç Sovyet bölümü ve iki İngiliz bölümü.
 
 | Sıra | Harita | Bölüm | Tarih |
 |---|---|---|---|
@@ -8,8 +8,9 @@ Birbirini izleyen özel tek oyunculu haritalar: üç Sovyet bölümü ve bir İn
 | 2 | `metel` | Operatsiya Metel — karakol ve iki havan mevzisi | 8 Ocak 1943 |
 | 3 | `burya` | Operation Snowstorm (Kar Fırtınası) — konvoy pususu, Alman kampı, üç patlayıcı | 2 Şubat 1943 |
 | 4 | `kumtepe` | Operation Sandstorm — çöl köyü, Panzer saldırısı, Crusader kurtarması (İngiliz) | 24 Ekim 1942 |
+| 5 | `kasrelbab` | Operation Silent Dawn — gizlenme, telsiz, surlu kasaba baskını, flak imhası (İngiliz) | 2 Kasım 1942 |
 
-Bölümler sırayla yüklenir: `krasnoye` → `metel` → `burya` → `kumtepe` → jenerik.
+Bölümler sırayla yüklenir: `krasnoye` → `metel` → `burya` → `kumtepe` → `kasrelbab` → jenerik.
 
 ## Kurulum
 
@@ -41,6 +42,14 @@ Oyunun 1.3 yamasıyla test edildi. Stok iwd dosyaları dışında başka bir şe
 3. Dört Panzer II batı vadisinden gelir; bir Stuka kapalı evin köşesini bombalar, Panzer'ler iki katlı evi iki atışta yıkar.
 4. Telsizle yardım istenir; Crusader'lar gelir, biri vurulur, diğerleri Panzer'leri patlatır; 15 İngiliz köye dağılır.
 5. Price meydanda askerlerin oluşturduğu halkada zafer konuşmasını yapar.
+
+**Kasr el-Bab (İngiliz, Mısır, şafak):**
+1. Oyuncu sırttaki çalılıkta yatarak gizlenir; Alman konvoyu (2 Blitz, yarı paletli, Panzer II) önünden geçer. Ayağa kalkarsa ya da çalıdan çıkarsa fark edilir.
+2. Kulübedeki telsizciyi öldürür, telsizle yardım çağırır; 20 sn sonra Price ve 12 İngiliz, ardından 5 Crusader gelir.
+3. Price'la buluşulur, ekip Crusader hattına gider; oyuncu kapıya yaklaşınca Crusader sur MG'lerini ve büyük kapıyı vurur, kanatlar yere devrilir, herkes kasabaya dalar.
+4. Kasaba temizlenir; üç flak 88 TNT ile istenen sırayla patlatılır.
+5. Doğudan 10 Alman saldırır, ardından gelen Panzer II'ye yapışkan bomba yapıştırılır (140 sn içinde patlatılmazsa iki İngiliz tırmanıp patlatır).
+6. Price kamyonu kontrol edip sürücü koltuğuna geçer, iki asker kasaya atlar; kamyon batı kapısından çıkar ve bölüm biter.
 
 ## Kaynak ve araçlar
 

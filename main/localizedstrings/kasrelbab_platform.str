@@ -1,0 +1,14 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "kasrelbab platform"
+
+REFERENCE           TELSIZ
+LANG_ENGLISH        "Tusa BAS: [&&1] Telsizle karargâha bilgi ver."
+
+REFERENCE           PATLAYICI
+LANG_ENGLISH        "Tusa BAS: [&&1] Patlayiciyi yerlestir."
+
+REFERENCE           KAMYON
+LANG_ENGLISH        "Tusa BAS: [&&1] Kamyonun kasasina bin."
+
+ENDMARKER

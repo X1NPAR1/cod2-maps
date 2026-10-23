@@ -1,0 +1,47 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "kasrelbab"
+
+REFERENCE           OBJ_GIZLEN
+LANG_ENGLISH        "Çalilarin arasinda gizlen: konvoy geçene kadar yat ve hareket etme."
+
+REFERENCE           OBJ_KULUBE
+LANG_ENGLISH        "Gözetleme kulübesindeki Almanlari sustur."
+
+REFERENCE           OBJ_TELSIZ
+LANG_ENGLISH        "Kulübedeki telsizle karargâha bilgi ver."
+
+REFERENCE           OBJ_TOPLAN
+LANG_ENGLISH        "Price ve 7. Zirhli Tümen birlikleriyle bulus."
+
+REFERENCE           OBJ_KASABA
+LANG_ENGLISH        "Kasr el-Bab'a gir: sur kapisindan ilerle ve kasabayi temizle."
+
+REFERENCE           OBJ_FLAK
+LANG_ENGLISH        "Üç flak topunu patlayiciyla imha et."
+
+REFERENCE           OBJ_PANZER
+LANG_ENGLISH        "Çikis yolunu tutan Panzer'in arkasina patlayici yerlestir."
+
+REFERENCE           OBJ_KAMYON
+LANG_ENGLISH        "Kapidaki kamyona bin."
+
+REFERENCE           MSG_TESPIT
+LANG_ENGLISH        "Konvoy seni gördü!"
+
+REFERENCE           MSG_YAT
+LANG_ENGLISH        "Konvoy yaklasiyor - yat ve çalilarda kal!"
+
+REFERENCE           INTRO_TITLE
+LANG_ENGLISH        ""Operation Silent Dawn""
+
+REFERENCE           INTRO_PLACE
+LANG_ENGLISH        "Kasr el-Bab yakinlari, Misir"
+
+REFERENCE           INTRO_DATE
+LANG_ENGLISH        "2 Kasim 1942"
+
+REFERENCE           INTRO_INFO
+LANG_ENGLISH        "8. Ordu, Çavus Davis, öncü kesif, saat 05:40"
+
+ENDMARKER
