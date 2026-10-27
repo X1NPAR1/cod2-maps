@@ -810,8 +810,6 @@ final_cikis()
 	tum = tum_ingilizler();
 	for (i = 0; i < tum.size; i++)
 		tum[i] notify("yeni_emir");
-	if (isdefined(level.panzer))
-		level.panzer delete();                      // halka yolunda enkaz kalmasin (kamyon cikisi)
 	// kullanici: kapi kirilmadan once kamyon dogar ve gelmeye baslar
 	level thread kamyon_gelsin();
 	n = getent("kapi_tekme", "targetname");

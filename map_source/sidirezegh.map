@@ -46398,12 +46398,12 @@ iwmap 4
 }
 // brush 1867
 {
- ( -690 -490 41 ) ( -830 -490 41 ) ( -830 -630 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
- ( -830 -630 100 ) ( -830 -490 100 ) ( -690 -490 100 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
- ( -830 -630 100 ) ( -690 -630 100 ) ( -690 -630 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
- ( -690 -630 100 ) ( -690 -490 100 ) ( -690 -490 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
- ( -690 -490 100 ) ( -830 -490 100 ) ( -830 -490 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
- ( -830 -490 100 ) ( -830 -630 100 ) ( -830 -630 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
+ ( -1110 -490 41 ) ( -1250 -490 41 ) ( -1250 -630 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
+ ( -1250 -630 100 ) ( -1250 -490 100 ) ( -1110 -490 100 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
+ ( -1250 -630 100 ) ( -1110 -630 100 ) ( -1110 -630 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
+ ( -1110 -630 100 ) ( -1110 -490 100 ) ( -1110 -490 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
+ ( -1110 -490 100 ) ( -1250 -490 100 ) ( -1250 -490 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
+ ( -1250 -490 100 ) ( -1250 -630 100 ) ( -1250 -630 41 ) clip 64 64 0 0 0 0 lightmap_gray 16384 16384 0 0 0 0
 }
 // brush 1868
 {
@@ -48928,7 +48928,7 @@ iwmap 4
 {
 "classname" "misc_prefab"
 "model" "prefabs/toujane/crates/cratepile_med5.map"
-"origin" "-760 -560 41"
+"origin" "-1180 -560 41"
 "angles" "0 70 0"
 }
 // entity 39
@@ -54164,747 +54164,747 @@ iwmap 4
 // entity 793
 {
 "classname" "node_pathnode"
-"origin" "-1296 -648 48"
+"origin" "-1296 -432 48"
 }
 // entity 794
 {
 "classname" "node_pathnode"
-"origin" "-1296 -576 48"
+"origin" "-1296 -360 48"
 }
 // entity 795
 {
 "classname" "node_pathnode"
-"origin" "-1296 -504 48"
+"origin" "-1296 -288 48"
 }
 // entity 796
 {
 "classname" "node_pathnode"
-"origin" "-1296 -432 48"
+"origin" "-1296 -216 48"
 }
 // entity 797
 {
 "classname" "node_pathnode"
-"origin" "-1296 -360 48"
+"origin" "-1296 -144 48"
 }
 // entity 798
 {
 "classname" "node_pathnode"
-"origin" "-1296 -288 48"
+"origin" "-1296 -72 48"
 }
 // entity 799
 {
 "classname" "node_pathnode"
-"origin" "-1296 -216 48"
+"origin" "-1296 0 48"
 }
 // entity 800
 {
 "classname" "node_pathnode"
-"origin" "-1296 -144 48"
+"origin" "-1296 72 48"
 }
 // entity 801
 {
 "classname" "node_pathnode"
-"origin" "-1296 -72 48"
+"origin" "-1296 144 48"
 }
 // entity 802
 {
 "classname" "node_pathnode"
-"origin" "-1296 0 48"
+"origin" "-1296 216 48"
 }
 // entity 803
 {
 "classname" "node_pathnode"
-"origin" "-1296 72 48"
+"origin" "-1296 360 48"
 }
 // entity 804
 {
 "classname" "node_pathnode"
-"origin" "-1296 144 48"
+"origin" "-1296 432 48"
 }
 // entity 805
 {
 "classname" "node_pathnode"
-"origin" "-1296 216 48"
+"origin" "-1296 504 48"
 }
 // entity 806
 {
 "classname" "node_pathnode"
-"origin" "-1296 360 48"
+"origin" "-1296 576 48"
 }
 // entity 807
 {
 "classname" "node_pathnode"
-"origin" "-1296 432 48"
+"origin" "-1296 648 48"
 }
 // entity 808
 {
 "classname" "node_pathnode"
-"origin" "-1296 504 48"
+"origin" "-1296 720 48"
 }
 // entity 809
 {
 "classname" "node_pathnode"
-"origin" "-1296 576 48"
+"origin" "-1224 -792 48"
 }
 // entity 810
 {
 "classname" "node_pathnode"
-"origin" "-1296 648 48"
+"origin" "-1224 -720 48"
 }
 // entity 811
 {
 "classname" "node_pathnode"
-"origin" "-1296 720 48"
+"origin" "-1224 -432 48"
 }
 // entity 812
 {
 "classname" "node_pathnode"
-"origin" "-1224 -792 48"
+"origin" "-1224 -360 48"
 }
 // entity 813
 {
 "classname" "node_pathnode"
-"origin" "-1224 -720 48"
+"origin" "-1224 -288 48"
 }
 // entity 814
 {
 "classname" "node_pathnode"
-"origin" "-1224 -648 48"
+"origin" "-1224 -216 48"
 }
 // entity 815
 {
 "classname" "node_pathnode"
-"origin" "-1224 -576 48"
+"origin" "-1224 -144 48"
 }
 // entity 816
 {
 "classname" "node_pathnode"
-"origin" "-1224 -504 48"
+"origin" "-1224 -72 48"
 }
 // entity 817
 {
 "classname" "node_pathnode"
-"origin" "-1224 -432 48"
+"origin" "-1224 360 48"
 }
 // entity 818
 {
 "classname" "node_pathnode"
-"origin" "-1224 -360 48"
+"origin" "-1224 432 48"
 }
 // entity 819
 {
 "classname" "node_pathnode"
-"origin" "-1224 -288 48"
+"origin" "-1224 504 48"
 }
 // entity 820
 {
 "classname" "node_pathnode"
-"origin" "-1224 -216 48"
+"origin" "-1224 576 48"
 }
 // entity 821
 {
 "classname" "node_pathnode"
-"origin" "-1224 -144 48"
+"origin" "-1224 648 48"
 }
 // entity 822
 {
 "classname" "node_pathnode"
-"origin" "-1224 -72 48"
+"origin" "-1224 720 48"
 }
 // entity 823
 {
 "classname" "node_pathnode"
-"origin" "-1224 360 48"
+"origin" "-1152 -792 48"
 }
 // entity 824
 {
 "classname" "node_pathnode"
-"origin" "-1224 432 48"
+"origin" "-1152 -720 48"
 }
 // entity 825
 {
 "classname" "node_pathnode"
-"origin" "-1224 504 48"
+"origin" "-1152 -432 48"
 }
 // entity 826
 {
 "classname" "node_pathnode"
-"origin" "-1224 576 48"
+"origin" "-1152 -360 48"
 }
 // entity 827
 {
 "classname" "node_pathnode"
-"origin" "-1224 648 48"
+"origin" "-1152 -288 48"
 }
 // entity 828
 {
 "classname" "node_pathnode"
-"origin" "-1224 720 48"
+"origin" "-1152 -216 48"
 }
 // entity 829
 {
 "classname" "node_pathnode"
-"origin" "-1152 -792 48"
+"origin" "-1152 -144 48"
 }
 // entity 830
 {
 "classname" "node_pathnode"
-"origin" "-1152 -720 48"
+"origin" "-1152 648 48"
 }
 // entity 831
 {
 "classname" "node_pathnode"
-"origin" "-1152 -648 48"
+"origin" "-1152 720 48"
 }
 // entity 832
 {
 "classname" "node_pathnode"
-"origin" "-1152 -576 48"
+"origin" "-1080 -792 48"
 }
 // entity 833
 {
 "classname" "node_pathnode"
-"origin" "-1152 -504 48"
+"origin" "-1080 -720 48"
 }
 // entity 834
 {
 "classname" "node_pathnode"
-"origin" "-1152 -432 48"
+"origin" "-1080 -432 48"
 }
 // entity 835
 {
 "classname" "node_pathnode"
-"origin" "-1152 -360 48"
+"origin" "-1080 -360 48"
 }
 // entity 836
 {
 "classname" "node_pathnode"
-"origin" "-1152 -288 48"
+"origin" "-1080 -288 48"
 }
 // entity 837
 {
 "classname" "node_pathnode"
-"origin" "-1152 -216 48"
+"origin" "-1080 -216 48"
 }
 // entity 838
 {
 "classname" "node_pathnode"
-"origin" "-1152 -144 48"
+"origin" "-1080 -144 48"
 }
 // entity 839
 {
 "classname" "node_pathnode"
-"origin" "-1152 648 48"
+"origin" "-1080 648 48"
 }
 // entity 840
 {
 "classname" "node_pathnode"
-"origin" "-1152 720 48"
+"origin" "-1080 720 48"
 }
 // entity 841
 {
 "classname" "node_pathnode"
-"origin" "-1080 -792 48"
+"origin" "-1008 -792 48"
 }
 // entity 842
 {
 "classname" "node_pathnode"
-"origin" "-1080 -720 48"
+"origin" "-1008 -720 48"
 }
 // entity 843
 {
 "classname" "node_pathnode"
-"origin" "-1080 -648 48"
+"origin" "-1008 -648 48"
 }
 // entity 844
 {
 "classname" "node_pathnode"
-"origin" "-1080 -576 48"
+"origin" "-1008 -576 48"
 }
 // entity 845
 {
 "classname" "node_pathnode"
-"origin" "-1080 -504 48"
+"origin" "-1008 -504 48"
 }
 // entity 846
 {
 "classname" "node_pathnode"
-"origin" "-1080 -432 48"
+"origin" "-1008 -432 48"
 }
 // entity 847
 {
 "classname" "node_pathnode"
-"origin" "-1080 -360 48"
+"origin" "-1008 -360 48"
 }
 // entity 848
 {
 "classname" "node_pathnode"
-"origin" "-1080 -288 48"
+"origin" "-1008 -288 48"
 }
 // entity 849
 {
 "classname" "node_pathnode"
-"origin" "-1080 -216 48"
+"origin" "-1008 -216 48"
 }
 // entity 850
 {
 "classname" "node_pathnode"
-"origin" "-1080 -144 48"
+"origin" "-1008 -144 48"
 }
 // entity 851
 {
 "classname" "node_pathnode"
-"origin" "-1080 648 48"
+"origin" "-1008 648 48"
 }
 // entity 852
 {
 "classname" "node_pathnode"
-"origin" "-1080 720 48"
+"origin" "-1008 720 48"
 }
 // entity 853
 {
 "classname" "node_pathnode"
-"origin" "-1008 -792 48"
+"origin" "-936 -792 48"
 }
 // entity 854
 {
 "classname" "node_pathnode"
-"origin" "-1008 -720 48"
+"origin" "-936 -720 48"
 }
 // entity 855
 {
 "classname" "node_pathnode"
-"origin" "-1008 -648 48"
+"origin" "-936 -648 48"
 }
 // entity 856
 {
 "classname" "node_pathnode"
-"origin" "-1008 -576 48"
+"origin" "-936 -576 48"
 }
 // entity 857
 {
 "classname" "node_pathnode"
-"origin" "-1008 -504 48"
+"origin" "-936 -504 48"
 }
 // entity 858
 {
 "classname" "node_pathnode"
-"origin" "-1008 -432 48"
+"origin" "-936 -432 48"
 }
 // entity 859
 {
 "classname" "node_pathnode"
-"origin" "-1008 -360 48"
+"origin" "-936 -360 48"
 }
 // entity 860
 {
 "classname" "node_pathnode"
-"origin" "-1008 -288 48"
+"origin" "-936 -288 48"
 }
 // entity 861
 {
 "classname" "node_pathnode"
-"origin" "-1008 -216 48"
+"origin" "-936 -216 48"
 }
 // entity 862
 {
 "classname" "node_pathnode"
-"origin" "-1008 -144 48"
+"origin" "-936 -144 48"
 }
 // entity 863
 {
 "classname" "node_pathnode"
-"origin" "-1008 648 48"
+"origin" "-936 -72 48"
 }
 // entity 864
 {
 "classname" "node_pathnode"
-"origin" "-1008 720 48"
+"origin" "-936 648 48"
 }
 // entity 865
 {
 "classname" "node_pathnode"
-"origin" "-936 -792 48"
+"origin" "-936 720 48"
 }
 // entity 866
 {
 "classname" "node_pathnode"
-"origin" "-936 -720 48"
+"origin" "-864 -792 48"
 }
 // entity 867
 {
 "classname" "node_pathnode"
-"origin" "-936 -648 48"
+"origin" "-864 -720 48"
 }
 // entity 868
 {
 "classname" "node_pathnode"
-"origin" "-936 -576 48"
+"origin" "-864 -648 48"
 }
 // entity 869
 {
 "classname" "node_pathnode"
-"origin" "-936 -504 48"
+"origin" "-864 -576 48"
 }
 // entity 870
 {
 "classname" "node_pathnode"
-"origin" "-936 -432 48"
+"origin" "-864 -504 48"
 }
 // entity 871
 {
 "classname" "node_pathnode"
-"origin" "-936 -360 48"
+"origin" "-864 -432 48"
 }
 // entity 872
 {
 "classname" "node_pathnode"
-"origin" "-936 -288 48"
+"origin" "-864 -360 48"
 }
 // entity 873
 {
 "classname" "node_pathnode"
-"origin" "-936 -216 48"
+"origin" "-864 -288 48"
 }
 // entity 874
 {
 "classname" "node_pathnode"
-"origin" "-936 -144 48"
+"origin" "-864 -216 48"
 }
 // entity 875
 {
 "classname" "node_pathnode"
-"origin" "-936 -72 48"
+"origin" "-864 -144 48"
 }
 // entity 876
 {
 "classname" "node_pathnode"
-"origin" "-936 648 48"
+"origin" "-864 -72 48"
 }
 // entity 877
 {
 "classname" "node_pathnode"
-"origin" "-936 720 48"
+"origin" "-864 648 48"
 }
 // entity 878
 {
 "classname" "node_pathnode"
-"origin" "-864 -792 48"
+"origin" "-864 720 48"
 }
 // entity 879
 {
 "classname" "node_pathnode"
-"origin" "-864 -720 48"
+"origin" "-792 -1368 48"
 }
 // entity 880
 {
 "classname" "node_pathnode"
-"origin" "-864 -432 48"
+"origin" "-792 -1296 48"
 }
 // entity 881
 {
 "classname" "node_pathnode"
-"origin" "-864 -360 48"
+"origin" "-792 -1224 48"
 }
 // entity 882
 {
 "classname" "node_pathnode"
-"origin" "-864 -288 48"
+"origin" "-792 -1152 48"
 }
 // entity 883
 {
 "classname" "node_pathnode"
-"origin" "-864 -216 48"
+"origin" "-792 -1080 48"
 }
 // entity 884
 {
 "classname" "node_pathnode"
-"origin" "-864 -144 48"
+"origin" "-792 -1008 48"
 }
 // entity 885
 {
 "classname" "node_pathnode"
-"origin" "-864 -72 48"
+"origin" "-792 -936 48"
 }
 // entity 886
 {
 "classname" "node_pathnode"
-"origin" "-864 648 48"
+"origin" "-792 -864 48"
 }
 // entity 887
 {
 "classname" "node_pathnode"
-"origin" "-864 720 48"
+"origin" "-792 -792 48"
 }
 // entity 888
 {
 "classname" "node_pathnode"
-"origin" "-792 -1368 48"
+"origin" "-792 -720 48"
 }
 // entity 889
 {
 "classname" "node_pathnode"
-"origin" "-792 -1296 48"
+"origin" "-792 -648 48"
 }
 // entity 890
 {
 "classname" "node_pathnode"
-"origin" "-792 -1224 48"
+"origin" "-792 -576 48"
 }
 // entity 891
 {
 "classname" "node_pathnode"
-"origin" "-792 -1152 48"
+"origin" "-792 -504 48"
 }
 // entity 892
 {
 "classname" "node_pathnode"
-"origin" "-792 -1080 48"
+"origin" "-792 -432 48"
 }
 // entity 893
 {
 "classname" "node_pathnode"
-"origin" "-792 -1008 48"
+"origin" "-792 -360 48"
 }
 // entity 894
 {
 "classname" "node_pathnode"
-"origin" "-792 -936 48"
+"origin" "-792 -288 48"
 }
 // entity 895
 {
 "classname" "node_pathnode"
-"origin" "-792 -864 48"
+"origin" "-792 -216 48"
 }
 // entity 896
 {
 "classname" "node_pathnode"
-"origin" "-792 -792 48"
+"origin" "-792 -144 48"
 }
 // entity 897
 {
 "classname" "node_pathnode"
-"origin" "-792 -720 48"
+"origin" "-792 -72 48"
 }
 // entity 898
 {
 "classname" "node_pathnode"
-"origin" "-792 -432 48"
+"origin" "-792 360 48"
 }
 // entity 899
 {
 "classname" "node_pathnode"
-"origin" "-792 -360 48"
+"origin" "-792 648 48"
 }
 // entity 900
 {
 "classname" "node_pathnode"
-"origin" "-792 -288 48"
+"origin" "-792 720 48"
 }
 // entity 901
 {
 "classname" "node_pathnode"
-"origin" "-792 -216 48"
+"origin" "-720 -1368 48"
 }
 // entity 902
 {
 "classname" "node_pathnode"
-"origin" "-792 -144 48"
+"origin" "-720 -1296 48"
 }
 // entity 903
 {
 "classname" "node_pathnode"
-"origin" "-792 -72 48"
+"origin" "-720 -1224 48"
 }
 // entity 904
 {
 "classname" "node_pathnode"
-"origin" "-792 360 48"
+"origin" "-720 -1152 48"
 }
 // entity 905
 {
 "classname" "node_pathnode"
-"origin" "-792 648 48"
+"origin" "-720 -1080 48"
 }
 // entity 906
 {
 "classname" "node_pathnode"
-"origin" "-792 720 48"
+"origin" "-720 -1008 48"
 }
 // entity 907
 {
 "classname" "node_pathnode"
-"origin" "-720 -1368 48"
+"origin" "-720 -936 48"
 }
 // entity 908
 {
 "classname" "node_pathnode"
-"origin" "-720 -1296 48"
+"origin" "-720 -864 48"
 }
 // entity 909
 {
 "classname" "node_pathnode"
-"origin" "-720 -1224 48"
+"origin" "-720 -792 48"
 }
 // entity 910
 {
 "classname" "node_pathnode"
-"origin" "-720 -1152 48"
+"origin" "-720 -720 48"
 }
 // entity 911
 {
 "classname" "node_pathnode"
-"origin" "-720 -1080 48"
+"origin" "-720 -648 48"
 }
 // entity 912
 {
 "classname" "node_pathnode"
-"origin" "-720 -1008 48"
+"origin" "-720 -576 48"
 }
 // entity 913
 {
 "classname" "node_pathnode"
-"origin" "-720 -936 48"
+"origin" "-720 -504 48"
 }
 // entity 914
 {
 "classname" "node_pathnode"
-"origin" "-720 -864 48"
+"origin" "-720 -432 48"
 }
 // entity 915
 {
 "classname" "node_pathnode"
-"origin" "-720 -792 48"
+"origin" "-720 -360 48"
 }
 // entity 916
 {
 "classname" "node_pathnode"
-"origin" "-720 -720 48"
+"origin" "-720 -288 48"
 }
 // entity 917
 {
 "classname" "node_pathnode"
-"origin" "-720 -432 48"
+"origin" "-720 -72 48"
 }
 // entity 918
 {
 "classname" "node_pathnode"
-"origin" "-720 -360 48"
+"origin" "-720 0 48"
 }
 // entity 919
 {
 "classname" "node_pathnode"
-"origin" "-720 -288 48"
+"origin" "-720 360 48"
 }
 // entity 920
 {
 "classname" "node_pathnode"
-"origin" "-720 -72 48"
+"origin" "-720 648 48"
 }
 // entity 921
 {
 "classname" "node_pathnode"
-"origin" "-720 0 48"
+"origin" "-720 720 48"
 }
 // entity 922
 {
 "classname" "node_pathnode"
-"origin" "-720 360 48"
+"origin" "-720 792 48"
 }
 // entity 923
 {
 "classname" "node_pathnode"
-"origin" "-720 648 48"
+"origin" "-720 864 48"
 }
 // entity 924
 {
 "classname" "node_pathnode"
-"origin" "-720 720 48"
+"origin" "-720 936 48"
 }
 // entity 925
 {
 "classname" "node_pathnode"
-"origin" "-720 792 48"
+"origin" "-720 1008 48"
 }
 // entity 926
 {
 "classname" "node_pathnode"
-"origin" "-720 864 48"
+"origin" "-720 1080 48"
 }
 // entity 927
 {
 "classname" "node_pathnode"
-"origin" "-720 936 48"
+"origin" "-720 1152 48"
 }
 // entity 928
 {
 "classname" "node_pathnode"
-"origin" "-720 1008 48"
+"origin" "-720 1368 48"
 }
 // entity 929
 {
 "classname" "node_pathnode"
-"origin" "-720 1080 48"
+"origin" "-648 -1368 48"
 }
 // entity 930
 {
 "classname" "node_pathnode"
-"origin" "-720 1152 48"
+"origin" "-648 -1296 48"
 }
 // entity 931
 {
 "classname" "node_pathnode"
-"origin" "-720 1368 48"
+"origin" "-648 -1224 48"
 }
 // entity 932
 {
 "classname" "node_pathnode"
-"origin" "-648 -1368 48"
+"origin" "-648 -1152 48"
 }
 // entity 933
 {
 "classname" "node_pathnode"
-"origin" "-648 -1296 48"
+"origin" "-648 -1080 48"
 }
 // entity 934
 {
 "classname" "node_pathnode"
-"origin" "-648 -1224 48"
+"origin" "-648 -1008 48"
 }
 // entity 935
 {
 "classname" "node_pathnode"
-"origin" "-648 -1152 48"
+"origin" "-648 -936 48"
 }
 // entity 936
 {
 "classname" "node_pathnode"
-"origin" "-648 -1080 48"
+"origin" "-648 -864 48"
 }
 // entity 937
 {
 "classname" "node_pathnode"
-"origin" "-648 -1008 48"
+"origin" "-648 -792 48"
 }
 // entity 938
 {
 "classname" "node_pathnode"
-"origin" "-648 -936 48"
+"origin" "-648 -720 48"
 }
 // entity 939
 {
 "classname" "node_pathnode"
-"origin" "-648 -864 48"
+"origin" "-648 -648 48"
 }
 // entity 940
 {
 "classname" "node_pathnode"
-"origin" "-648 -792 48"
+"origin" "-648 -576 48"
 }
 // entity 941
 {
 "classname" "node_pathnode"
-"origin" "-648 -720 48"
+"origin" "-648 -504 48"
 }
 // entity 942
 {
@@ -63951,329 +63951,329 @@ iwmap 4
 // entity 2553
 {
 "classname" "info_vehicle_node"
-"origin" "-1203.1 -71.9 57"
+"origin" "-1203.1 -89.4 57"
 "targetname" "kurtarma_yol_40"
 "target" "kurtarma_yol_41"
 }
 // entity 2554
 {
 "classname" "info_vehicle_node"
-"origin" "-980 -160.9 57"
+"origin" "-991.2 -203 57"
 "targetname" "kurtarma_yol_41"
 "target" "kurtarma_yol_42"
 }
 // entity 2555
 {
 "classname" "info_vehicle_node"
-"origin" "-761.9 -278.1 57"
+"origin" "-814.4 -357.5 57"
 "targetname" "kurtarma_yol_42"
 "target" "kurtarma_yol_43"
 }
 // entity 2556
 {
 "classname" "info_vehicle_node"
-"origin" "-555.3 -405.6 57"
+"origin" "-654.7 -522.5 57"
 "targetname" "kurtarma_yol_43"
 "target" "kurtarma_yol_44"
 }
 // entity 2557
 {
 "classname" "info_vehicle_node"
-"origin" "-328.8 -536.9 57"
+"origin" "-437.5 -672.5 57"
 "targetname" "kurtarma_yol_44"
 "target" "kurtarma_yol_45"
 }
 // entity 2558
 {
 "classname" "info_vehicle_node"
-"origin" "-126.2 -663 57"
+"origin" "-231.2 -767 57"
 "targetname" "kurtarma_yol_45"
 "target" "kurtarma_yol_46"
 }
 // entity 2559
 {
 "classname" "info_vehicle_node"
-"origin" "0 -844.1 57"
+"origin" "-13.1 -838.4 57"
 "targetname" "kurtarma_yol_46"
 "target" "kurtarma_yol_47"
 }
 // entity 2560
 {
 "classname" "info_vehicle_node"
-"origin" "0 -1093.8 57"
+"origin" "0 -1062.5 57"
 "targetname" "kurtarma_yol_47"
 "target" "kurtarma_yol_48"
 }
 // entity 2561
 {
 "classname" "info_vehicle_node"
-"origin" "-1 -1341.4 57"
+"origin" "-0.4 -1305.6 57"
 "targetname" "kurtarma_yol_48"
 "target" "kurtarma_yol_49"
 }
 // entity 2562
 {
 "classname" "info_vehicle_node"
-"origin" "-15 -1568.2 56"
+"origin" "-12.2 -1537.7 56"
 "targetname" "kurtarma_yol_49"
 "target" "kurtarma_yol_50"
 }
 // entity 2563
 {
 "classname" "info_vehicle_node"
-"origin" "-36.7 -1812.4 39.3"
+"origin" "-33.9 -1781.9 40.5"
 "targetname" "kurtarma_yol_50"
 "target" "kurtarma_yol_51"
 }
 // entity 2564
 {
 "classname" "info_vehicle_node"
-"origin" "-57.9 -2056.5 29.3"
+"origin" "-55.6 -2026 30.6"
 "targetname" "kurtarma_yol_51"
 "target" "kurtarma_yol_52"
 }
 // entity 2565
 {
 "classname" "info_vehicle_node"
-"origin" "-57.6 -2298.1 19.4"
+"origin" "-59.9 -2268.2 20.8"
 "targetname" "kurtarma_yol_52"
 "target" "kurtarma_yol_53"
 }
 // entity 2566
 {
 "classname" "info_vehicle_node"
-"origin" "-3 -2533.5 14.8"
+"origin" "-12.6 -2504.4 15.4"
 "targetname" "kurtarma_yol_53"
 "target" "kurtarma_yol_54"
 }
 // entity 2567
 {
 "classname" "info_vehicle_node"
-"origin" "73.9 -2766.2 10.1"
+"origin" "64.3 -2737.2 10.7"
 "targetname" "kurtarma_yol_54"
 "target" "kurtarma_yol_55"
 }
 // entity 2568
 {
 "classname" "info_vehicle_node"
-"origin" "150.7 -2999 5.4"
+"origin" "141.1 -2969.9 6"
 "targetname" "kurtarma_yol_55"
 "target" "kurtarma_yol_56"
 }
 // entity 2569
 {
 "classname" "info_vehicle_node"
-"origin" "229.1 -3231 0.8"
+"origin" "218.5 -3202.4 1.3"
 "targetname" "kurtarma_yol_56"
 "target" "kurtarma_yol_57"
 }
 // entity 2570
 {
 "classname" "info_vehicle_node"
-"origin" "344.4 -3445.3 9.5"
+"origin" "327.8 -3419.6 7.7"
 "targetname" "kurtarma_yol_57"
 "target" "kurtarma_yol_58"
 }
 // entity 2571
 {
 "classname" "info_vehicle_node"
-"origin" "478 -3650.8 23.8"
+"origin" "461.3 -3625.1 22"
 "targetname" "kurtarma_yol_58"
 "target" "kurtarma_yol_59"
 }
 // entity 2572
 {
 "classname" "info_vehicle_node"
-"origin" "611.6 -3856.4 38"
+"origin" "594.9 -3830.7 36.3"
 "targetname" "kurtarma_yol_59"
 "target" "kurtarma_yol_60"
 }
 // entity 2573
 {
 "classname" "info_vehicle_node"
-"origin" "745.4 -4061.7 52.3"
+"origin" "728.5 -4036.2 50.5"
 "targetname" "kurtarma_yol_60"
 "target" "kurtarma_yol_61"
 }
 // entity 2574
 {
 "classname" "info_vehicle_node"
-"origin" "887.2 -4259.1 66.5"
+"origin" "868.2 -4235.7 64.7"
 "targetname" "kurtarma_yol_61"
 "target" "kurtarma_yol_62"
 }
 // entity 2575
 {
 "classname" "info_vehicle_node"
-"origin" "1071.6 -4414.4 69"
+"origin" "1046.1 -4397.4 68.9"
 "targetname" "kurtarma_yol_62"
 "target" "kurtarma_yol_63"
 }
 // entity 2576
 {
 "classname" "info_vehicle_node"
-"origin" "1275.6 -4550.4 69.1"
+"origin" "1250.1 -4533.4 69"
 "targetname" "kurtarma_yol_63"
 "target" "kurtarma_yol_64"
 }
 // entity 2577
 {
 "classname" "info_vehicle_node"
-"origin" "1479.5 -4686.3 69.1"
+"origin" "1454 -4669.3 69.1"
 "targetname" "kurtarma_yol_64"
 "target" "kurtarma_yol_65"
 }
 // entity 2578
 {
 "classname" "info_vehicle_node"
-"origin" "1683.5 -4822.3 69.2"
+"origin" "1658 -4805.3 69.2"
 "targetname" "kurtarma_yol_65"
 "target" "kurtarma_yol_66"
 }
 // entity 2579
 {
 "classname" "info_vehicle_node"
-"origin" "1887.5 -4958.1 69.3"
+"origin" "1861.9 -4941.3 69.3"
 "targetname" "kurtarma_yol_66"
 "target" "kurtarma_yol_67"
 }
 // entity 2580
 {
 "classname" "info_vehicle_node"
-"origin" "2096 -5085.4 69.4"
+"origin" "2069.5 -5070.4 69.4"
 "targetname" "kurtarma_yol_67"
 "target" "kurtarma_yol_68"
 }
 // entity 2581
 {
 "classname" "info_vehicle_node"
-"origin" "2318 -5187.2 111.9"
+"origin" "2289.5 -5175.8 106.4"
 "targetname" "kurtarma_yol_68"
 "target" "kurtarma_yol_69"
 }
 // entity 2582
 {
 "classname" "info_vehicle_node"
-"origin" "2545.6 -5278.2 156.2"
+"origin" "2517.1 -5266.8 150.7"
 "targetname" "kurtarma_yol_69"
 "target" "kurtarma_yol_70"
 }
 // entity 2583
 {
 "classname" "info_vehicle_node"
-"origin" "2773.1 -5369.3 200.5"
+"origin" "2744.7 -5357.9 195"
 "targetname" "kurtarma_yol_70"
 "target" "kurtarma_yol_71"
 }
 // entity 2584
 {
 "classname" "info_vehicle_node"
-"origin" "3000.7 -5460.3 244.8"
+"origin" "2972.3 -5448.9 239.3"
 "targetname" "kurtarma_yol_71"
 "target" "kurtarma_yol_72"
 }
 // entity 2585
 {
 "classname" "info_vehicle_node"
-"origin" "3228.3 -5551.3 289.1"
+"origin" "3199.9 -5540 283.6"
 "targetname" "kurtarma_yol_72"
 "target" "kurtarma_yol_73"
 }
 // entity 2586
 {
 "classname" "info_vehicle_node"
-"origin" "3456 -5642.1 333.5"
+"origin" "3427.5 -5631 327.9"
 "targetname" "kurtarma_yol_73"
 "target" "kurtarma_yol_74"
 }
 // entity 2587
 {
 "classname" "info_vehicle_node"
-"origin" "3687.1 -5723.1 372.5"
+"origin" "3658 -5713.7 368.7"
 "targetname" "kurtarma_yol_74"
 "target" "kurtarma_yol_75"
 }
 // entity 2588
 {
 "classname" "info_vehicle_node"
-"origin" "3921.4 -5794.5 402.2"
+"origin" "3892.1 -5785.9 398.5"
 "targetname" "kurtarma_yol_75"
 "target" "kurtarma_yol_76"
 }
 // entity 2589
 {
 "classname" "info_vehicle_node"
-"origin" "4156.6 -5863.7 432"
+"origin" "4127.2 -5855.1 428.3"
 "targetname" "kurtarma_yol_76"
 "target" "kurtarma_yol_77"
 }
 // entity 2590
 {
 "classname" "info_vehicle_node"
-"origin" "4391.8 -5932.9 461.8"
+"origin" "4362.4 -5924.2 458.1"
 "targetname" "kurtarma_yol_77"
 "target" "kurtarma_yol_78"
 }
 // entity 2591
 {
 "classname" "info_vehicle_node"
-"origin" "4626.9 -6002 491.6"
+"origin" "4597.5 -5993.4 487.9"
 "targetname" "kurtarma_yol_78"
 "target" "kurtarma_yol_79"
 }
 // entity 2592
 {
 "classname" "info_vehicle_node"
-"origin" "4862.1 -6071.2 521.4"
+"origin" "4832.7 -6062.6 517.7"
 "targetname" "kurtarma_yol_79"
 "target" "kurtarma_yol_80"
 }
 // entity 2593
 {
 "classname" "info_vehicle_node"
-"origin" "5097.2 -6140.4 551.2"
+"origin" "5067.9 -6131.7 547.5"
 "targetname" "kurtarma_yol_80"
 "target" "kurtarma_yol_81"
 }
 // entity 2594
 {
 "classname" "info_vehicle_node"
-"origin" "5331.6 -6212.2 577.5"
+"origin" "5302.4 -6203 576.9"
 "targetname" "kurtarma_yol_81"
 "target" "kurtarma_yol_82"
 }
 // entity 2595
 {
 "classname" "info_vehicle_node"
-"origin" "5564.6 -6288.2 581.7"
+"origin" "5535.5 -6278.5 581.2"
 "targetname" "kurtarma_yol_82"
 "target" "kurtarma_yol_83"
 }
 // entity 2596
 {
 "classname" "info_vehicle_node"
-"origin" "5797.2 -6365.7 586"
+"origin" "5768.1 -6356 585.5"
 "targetname" "kurtarma_yol_83"
 "target" "kurtarma_yol_84"
 }
 // entity 2597
 {
 "classname" "info_vehicle_node"
-"origin" "6029.7 -6443.2 590.3"
+"origin" "6000.6 -6433.5 589.7"
 "targetname" "kurtarma_yol_84"
 "target" "kurtarma_yol_85"
 }
 // entity 2598
 {
 "classname" "info_vehicle_node"
-"origin" "6262.2 -6520.7 594.5"
+"origin" "6233.2 -6511.1 594"
 "targetname" "kurtarma_yol_85"
 "target" "kurtarma_yol_86"
 }
 // entity 2599
 {
 "classname" "info_vehicle_node"
-"origin" "6494.8 -6598.3 598.8"
+"origin" "6465.7 -6588.6 598.3"
 "targetname" "kurtarma_yol_86"
 "target" "kurtarma_yol_87"
 "speed" "6"
@@ -64281,7 +64281,7 @@ iwmap 4
 // entity 2600
 {
 "classname" "info_vehicle_node"
-"origin" "6723.7 -6674.6 603"
+"origin" "6698.3 -6666.1 602.5"
 "targetname" "kurtarma_yol_87"
 "target" "kurtarma_yol_88"
 }
@@ -64656,7 +64656,7 @@ iwmap 4
 // entity 2649
 {
 "classname" "info_vehicle_node"
-"origin" "-1259.4 -143 57"
+"origin" "-1378.6 215.1 57"
 "targetname" "crusader1_yol_40"
 "target" "crusader1_yol_41"
 "speed" "9"
@@ -64664,14 +64664,14 @@ iwmap 4
 // entity 2650
 {
 "classname" "info_vehicle_node"
-"origin" "-1135.2 -339.1 57"
+"origin" "-1306.9 462.5 57"
 "targetname" "crusader1_yol_41"
 "target" "crusader1_yol_42"
 }
 // entity 2651
 {
 "classname" "info_vehicle_node"
-"origin" "-1100 -400 57"
+"origin" "-1250 620 57"
 "targetname" "crusader1_yol_42"
 }
 // entity 2652

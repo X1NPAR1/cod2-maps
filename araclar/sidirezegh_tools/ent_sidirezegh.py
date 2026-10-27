@@ -280,7 +280,7 @@ def yerlestir(G):
     # cikis: guney kapisindan duz, guney yolu boyunca harita disina (bina yok)
     _gir = yol_sonu(G.YOL_B, (1400, 0))
     _cik = list(reversed(yol_sonu(G.YOL_G, (0, 1300))))
-    yol = _gir + [(-950, -160), (-520, -430), (-180, -620), (0, -760), (0, -880), (0, -1100)] + _cik[1:]
+    yol = _gir + [(-950, -200), (-640, -560), (-280, -760), (0, -830), (0, -880), (0, -1100)] + _cik[1:]   # Panzer halkasindaki enkazdan uzak (kullanici: enkaz kalsin)
     arac('kurtarma', 3, yol, 12, 'blitz', 'xmodel/vehicle_opel_blitz_desert', takim='allies', binen=3,
          yerler=[(i, BRIT[i % 6], {}) for i in range(6)])   # kullanici: sofor + kasada 5 Ingiliz
     # kullanici: kamyon geldikten 5 sn sonra 3 sn arayla 5 Crusader, harita disindan yollarla gelir:
@@ -291,7 +291,7 @@ def yerlestir(G):
         d = math.hypot(bx - ax, by - ay) or 1
         ux, uy = (bx - ax) / d, (by - ay) / d
         return yol + [(bx + ux * ileri - uy * yan, by + uy * ileri + ux * yan)]
-    CRUS = [yol_sonu(G.YOL_B, (1400, 0)) + [(-1250, -140), (-1100, -400)],
+    CRUS = [yol_sonu(G.YOL_B, (1400, 0)) + [(-1380, 260), (-1250, 620)],
             yan_cek(yol_sonu(G.YOL_K, (0, 2800)), 380),
             yol_sonu(G.YOL_D, (2650, 0)),
             yol_sonu(G.YOL_K, (0, 2250)),
@@ -334,6 +334,11 @@ def yerlestir(G):
                 for (qx, qy) in _seg(a_, b_):
                     if math.hypot(qx - cx_, qy - cy_) < 260:
                         sorun.append((ad_, 'yol:' + ad2, round(qx), round(qy)))
+    for (qa, qb) in zip(ARAC_YOL['kurtarma'], ARAC_YOL['kurtarma'][1:]):
+        for (qx, qy) in _seg(qa, qb):
+            for (hx, hy) in HALKA:
+                if math.hypot(qx - hx, qy - hy) < 230:
+                    sorun.append(('kurtarma', 'panzer_enkaz_yeri', round(qx), round(qy)))
     sorun = sorted(set(sorun))
     print('ARAC CARPISMA: %d' % len(sorun))
     import collections

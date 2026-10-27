@@ -569,7 +569,7 @@ for (p, x, y) in CEVRE:
     prefab(p, x, y, bakis=math.degrees(math.atan2(-y, -x)))
 # pazar ve meydan dekoru (toujane prefablari + modeller)
 for (p, x, y, yaw) in (('prefabs/toujane/tj_merchant2.map', -700, 520, 330), ('prefabs/toujane/tj_merchant3.map', 720, 560, 210),
-                       ('prefabs/toujane/crates/cratepile_med2.map', 760, -560, 20), ('prefabs/toujane/crates/cratepile_med5.map', -760, -560, 70)):
+                       ('prefabs/toujane/crates/cratepile_med2.map', 760, -560, 20), ('prefabs/toujane/crates/cratepile_med5.map', -1180, -560, 70)):
     H.ent('misc_prefab', model=p, origin=(x, y, ZK + 1), angles=(0, yaw, 0))
     YAPILAR['pazar_%d_%d' % (x, y)] = (x - 90, y - 90, x + 90, y + 90, False)
     H.kutu(x - 70, y - 70, ZK + 1, x + 70, y + 70, ZK + 60, 'clip', 'clip', alt='clip')
