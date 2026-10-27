@@ -1,11 +1,11 @@
 # Call of Duty 2 — Tek Oyunculu Kampanya: Doğu ve Çöl Cepheleri
 
-Call of Duty 2 (PC, sürüm 1.3) için sıfırdan yapılmış, birbirine bağlı **beş bölümlük** bir tek oyunculu kampanya. Önce üç Sovyet bölümü, ardından iki İngiliz bölümü oynanır. Her bölüm bitince bir sonraki kendiliğinden yüklenir, en sonda oyunun jeneriği gelir.
+Call of Duty 2 (PC, sürüm 1.3) için sıfırdan yapılmış, birbirine bağlı **altı bölümlük** bir tek oyunculu kampanya. Önce üç Sovyet bölümü, ardından üç İngiliz bölümü oynanır. Her bölüm bitince bir sonraki kendiliğinden yüklenir, en sonda oyunun jeneriği gelir.
 
 | | |
 |---|---|
-| **Bölüm sayısı** | 5 (3 Sovyet, 2 İngiliz) |
-| **Toplam oynanış süresi** | yaklaşık **45 dakika – 1 saat** (normal zorlukta, ilk oynayışta) |
+| **Bölüm sayısı** | 6 (3 Sovyet, 3 İngiliz) |
+| **Toplam oynanış süresi** | yaklaşık **1 saat – 1 saat 15 dakika** (normal zorlukta, ilk oynayışta) |
 | **Gereken** | Call of Duty 2 sürüm 1.3; başka mod ya da dosya gerekmez |
 | **Dil** | Görev metinleri Türkçe; konuşmalar oyunun kendi İngilizce/Rusça seslendirmeleri, Türkçe altyazılı |
 | **Kurulum** | Tek dosyalık kurulum programı ya da elle kopyalama |
@@ -21,8 +21,9 @@ Call of Duty 2 (PC, sürüm 1.3) için sıfırdan yapılmış, birbirine bağlı
 | 3 | `burya` | **Operation Snowstorm** — konvoy pususu, Alman kampı, üç patlayıcı | Doğu Cephesi, orman | 2 Şubat 1943 |
 | 4 | `kumtepe` | **Operation Sandstorm** — çöl köyü, Panzer saldırısı, Crusader kurtarması | Kuzey Afrika, El Alamein | 24 Ekim 1942 |
 | 5 | `kasrelbab` | **Operation Silent Dawn** — gizlenme, telsiz, surlu kasaba baskını | Kuzey Afrika, Mısır | 2 Kasım 1942 |
+| 6 | `sidirezegh` | **Operation Last Bastion** — iki katlı karargâhta üç dalgalık savunma | Kuzey Afrika, Libya | 23 Kasım 1941 |
 
-Oynanış sırası: `krasnoye` → `metel` → `burya` → `kumtepe` → `kasrelbab` → jenerik.
+Oynanış sırası: `krasnoye` → `metel` → `burya` → `kumtepe` → `kasrelbab` → `sidirezegh` → jenerik.
 
 ### 1. Krasnoye Kolhozu (Sovyet)
 Teğmen Leonov ve sekiz kişilik ekibiyle karlı bir kolhoz köyü evden eve temizlenir. Ardından kamyon, yarı paletli ve Panzer II ile gelen Alman karşı saldırısı püskürtülür; tank yapışkan bombayla durdurulur.
@@ -52,6 +53,14 @@ Teğmen Leonov ve sekiz kişilik ekibiyle karlı bir kolhoz köyü evden eve tem
 4. Kasaba temizlenir, üç Flak 88 istenen sırayla TNT ile patlatılır.
 5. Doğudan gelen saldırının ardından bir Panzer II'ye yapışkan bomba yapıştırılır.
 6. Price kamyonun sürücü koltuğuna geçer, askerler kasaya atlar ve kamyon kasabadan çıkar.
+
+### 6. Operation Last Bastion (İngiliz)
+1. Sidi Rezegh yakınlarında, surlarla çevrili bir Libya kasabası. Cpt. Price ve altı İngilizle iki katlı karargâh savunulur; askerler alt ve üst kat pencerelerine dağılır. Silahlar dürbünlü Lee-Enfield ve Thompson.
+2. Birinci dalga: piyade ve yolcularını kapıda indiren bir Alman kamyonu.
+3. İkinci dalga: daha kalabalık piyade ve kasabaya giren bir yarı paletli.
+4. Üçüncü dalga: ikinci yarı paletli ve Panzer II. Tank karargâhın çevresinde tur atar. Tank gelince alt katta duvara dayalı bir Panzerschreck belirir; alınıp tank yok edilir.
+5. Price kapıyı tekmeyle kırar. Bir İngiliz kamyonu gelir; askerleri inip karargâha yerleşir, beş Crusader kasabanın çevresine konumlanır.
+6. Price sürücü koltuğuna geçer, oyuncu ve dört asker kasaya biner, kamyon güney kapısından çıkar.
 
 ---
 
@@ -98,7 +107,7 @@ Bütün haritalar Python ile üretildi; Radiant'ta elle çizilmedi.
 | `araclar/<harita>_tools/ses_kur.py` | Ses alias'ları, görev metinleri ve altyazılar |
 | `araclar/<harita>_tools/derle.bat`, `dogrula.ps1` | BSP ve ışık derlemesi, yapay zekâ yol bağlama, günlük denetimi |
 | `araclar/<harita>_tools/yol_denetim.py` | Derlenmiş haritanın yol ağını çözer, ulaşılamayan noktaları raporlar |
-| `araclar/kasrelbab_tools/akis.ps1` | Görevi baştan sona otomatik oynayan akış testi |
+| `araclar/<harita>_tools/akis.ps1` | Görevi baştan sona otomatik oynayan akış testi |
 | `kurulum/` | Kurulum programının kaynağı (`Kurulum.cs`) ve derleme betiği (`derle.ps1`; ek araç gerektirmez) |
 
 Araç betiklerinde oyun yolu `F:\Activision\Call of Duty 2` olarak sabit yazılıdır; başka bir kurulumda bu yolu düzenleyin.

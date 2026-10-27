@@ -1,0 +1,41 @@
+VERSION             "1"
+CONFIG              "C:\trees\cod2\bin\StringEd.cfg"
+FILENOTES           "sidirezegh"
+
+REFERENCE           OBJ_SAVUN
+LANG_ENGLISH        "Karargahi Alman saldirisina karsi savun."
+
+REFERENCE           OBJ_DALGA2
+LANG_ENGLISH        "Ikinci dalga: zirhli araçla geliyorlar!"
+
+REFERENCE           OBJ_DALGA3
+LANG_ENGLISH        "Üçüncü dalga: Panzer geliyor!"
+
+REFERENCE           OBJ_SCHRECK
+LANG_ENGLISH        "Karargahtaki Panzerschreck'i al."
+
+REFERENCE           OBJ_PANZER
+LANG_ENGLISH        "Panzer'i Panzerschreck ile yok et."
+
+REFERENCE           OBJ_PRICE
+LANG_ENGLISH        "Yüzbasi Price'in yanina git."
+
+REFERENCE           MSG_KURTARMA
+LANG_ENGLISH        "8. Ordu takviyesi geldi!"
+
+REFERENCE           OBJ_KAMYON
+LANG_ENGLISH        "Kamyonun kasasina bin."
+
+REFERENCE           INTRO_TITLE
+LANG_ENGLISH        ""Operation Last Bastion""
+
+REFERENCE           INTRO_PLACE
+LANG_ENGLISH        "Sidi Rezegh yakinlari, Libya"
+
+REFERENCE           INTRO_DATE
+LANG_ENGLISH        "23 Kasim 1941"
+
+REFERENCE           INTRO_INFO
+LANG_ENGLISH        "8. Ordu, Yüzbasi Price'in mangasi, saat 17:40"
+
+ENDMARKER

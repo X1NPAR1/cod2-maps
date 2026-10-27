@@ -1,4 +1,4 @@
-// Kurulum.cs -- CoD2 tek oyunculu haritalar kurulum programi.
+﻿// Kurulum.cs -- CoD2 tek oyunculu haritalar kurulum programi.
 // Gomulu haritalar.zip'i secilen Call of Duty 2 klasorunun main\ altina acar,
 // masaustune dogrudan krasnoye ile baslayan bir kisayol koyar.
 // Derleme: kurulum\derle.ps1
@@ -43,8 +43,8 @@ class Kurulum : Form
             Font = new Font("Segoe UI", 13f, FontStyle.Bold),
             Location = new Point(20, 16), AutoSize = true };
         var aciklama = new Label {
-            Text = "Bes bolum sirayla oynanir:\r\n" +
-                   "krasnoye > metel > burya > kumtepe > kasrelbab > jenerik\r\n\r\n" +
+            Text = "Alti bolum sirayla oynanir:\r\n" +
+                   "krasnoye > metel > burya > kumtepe > kasrelbab > sidirezegh > jenerik\r\n\r\n" +
                    "Call of Duty 2'nin kurulu oldugu ana klasoru secin (icinde CoD2SP_s.exe olan klasor).",
             Location = new Point(22, 50), Size = new Size(520, 80) };
         yolKutu = new TextBox { Location = new Point(22, 136), Width = 420, Text = KlasorBul() };

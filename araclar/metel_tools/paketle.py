@@ -11,10 +11,10 @@ def kopya(kaynak, hedef):
     os.makedirs(os.path.dirname(hedef), exist_ok=True)
     shutil.copy2(kaynak, hedef)
 
-for h in ('krasnoye', 'metel', 'burya', 'kumtepe', 'kasrelbab'):
+for h in ('krasnoye', 'metel', 'burya', 'kumtepe', 'kasrelbab', 'sidirezegh'):
     for f in glob.glob(os.path.join(OYUN, 'main', 'maps', h + '*')):
         ad = os.path.basename(f)
-        if ad.endswith(('.d3dprt', '.d3dpoly')) or '.bak' in ad or 'duman' in ad:
+        if ad.endswith(('.d3dprt', '.d3dpoly', '.lin')) or '.bak' in ad or 'duman' in ad:
             continue
         kopya(f, os.path.join(DEPO, 'main', 'maps', ad))
     for alt, uz in (('soundaliases', '.csv'), ('localizedstrings', '.str'), ('sun', '.sun')):

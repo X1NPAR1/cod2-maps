@@ -22,6 +22,9 @@ public class KrFare {
   // Oyun penceresi IKINCI ekrana (x=1920) tasinir; tiklamadan sonra odak ve imlec
   // kullanicinin onceki penceresine (birinci ekranda film) geri verilir.
   public static void Tasi(IntPtr h) { MoveWindow(h, 1920 + 300, 160, 1296, 758, true); }
+  [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int w, int hh, uint f);
+  // tur boyunca oyun penceresi en ustte: ekran yakalama kullanicinin pencerelerini almasin
+  public static void Ustte(IntPtr h) { SetWindowPos(h, new IntPtr(-1), 0, 0, 0, 0, 0x0001 | 0x0002 | 0x0010); }
   public static void Tikla(IntPtr h) {
     IntPtr onceki = GetForegroundWindow(); POINT eski; GetCursorPos(out eski);
     RECT r; GetWindowRect(h, out r); SetForegroundWindow(h);
@@ -110,6 +113,7 @@ while ($t -lt 2400 -and $adim -le $Nokta) {
         if ($son -gt $adim) { "nokta $adim KACIRILDI"; $adim = $son }
         Start-Sleep -Milliseconds 1500
         $p.Refresh()
+        [KrFare]::Ustte($p.MainWindowHandle)
         Yakala $p.MainWindowHandle ("$r\kasrelbab_tools\ekran\{0}_{1}.png" -f $Onek, $adim)
         "nokta $adim alindi"
         $adim++

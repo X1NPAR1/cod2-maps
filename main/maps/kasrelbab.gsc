@@ -1480,7 +1480,7 @@ bolum_sonu()
 	perde.alpha = 1;
 	wait 6.5;
 	test_yaz("GOREV TAMAM");
-	missionSuccess("credits", false);
+	missionSuccess("sidirezegh", false);   // zincir: kasrelbab -> sidirezegh -> jenerik
 }
 
 price_der(replik)
